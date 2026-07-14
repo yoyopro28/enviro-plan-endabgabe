@@ -1,0 +1,3102 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="generator" content="html-slides v0.9.4" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%232f6b4f'/%3E%3Cpath d='M18 39c16 2 24-8 29-23 4 18-3 31-20 32-5 0-8-4-9-9Z' fill='%23eaf4ee'/%3E%3C/svg%3E" />
+  <title>Enviro-Plan – Strategie- und Projekt-BMC</title>
+  <style>
+    :root{
+      --green:#2f6b4f;
+      --green-2:#5f8f6b;
+      --mint:#eaf4ee;
+      --dark:#1f2a25;
+      --grey:#6b756f;
+      --line:#d8e2dc;
+      --white:#fff;
+      --shadow:0 24px 70px rgba(22,38,29,.22);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--dark);
+      background:
+        radial-gradient(circle at top left, rgba(95,143,107,.28), transparent 38%),
+        radial-gradient(circle at bottom right, rgba(47,107,79,.22), transparent 34%),
+        #f7faf8;
+      overflow:hidden;
+    }
+
+    .deck{
+      height:100vh;
+      height:100dvh;
+      width:100vw;
+      position:relative;
+    }
+
+    .slide{
+      position:absolute;
+      inset:0;
+      height:100vh;
+      height:100dvh;
+      padding:clamp(28px,4vw,64px);
+      padding-bottom:120px;
+      display:none;
+      opacity:0;
+      transform:translateY(14px);
+      transition:.35s ease;
+      overflow:hidden;
+    }
+
+    .slide.active{
+      display:flex;
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .slide-inner{
+      width:min(1180px,100%);
+      margin:auto;
+      min-height:calc(100vh - 190px);
+      display:flex;
+      flex-direction:column;
+      gap:28px;
+    }
+
+    .eyebrow{
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--green);
+      font-size:13px;
+    }
+
+    h1{
+      font-size:clamp(42px,6vw,78px);
+      line-height:.95;
+      margin:0;
+      letter-spacing:-.055em;
+    }
+
+    h2{
+      font-size:clamp(32px,4vw,54px);
+      line-height:1.02;
+      margin:0;
+      letter-spacing:-.04em;
+    }
+
+    h3{
+      font-size:22px;
+      margin:0 0 8px;
+    }
+
+    p{
+      font-size:clamp(18px,2vw,24px);
+      line-height:1.45;
+      margin:0;
+      color:#34423b;
+    }
+
+    .muted{color:var(--grey)}
+
+    .hero-card{
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(216,226,220,.9);
+      border-radius:32px;
+      padding:42px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:28px;
+      align-items:center;
+    }
+
+    .pillrow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:28px;
+    }
+
+    .pill{
+      background:var(--mint);
+      border:1px solid #d7e7dc;
+      color:var(--green);
+      border-radius:999px;
+      padding:10px 14px;
+      font-weight:700;
+    }
+
+    .presenters{
+      margin-top:24px;
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      padding-left:16px;
+      border-left:3px solid rgba(95,143,107,.32);
+    }
+
+    .presenters-label{
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:rgba(47,107,79,.8);
+    }
+
+    .presenters-names{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:clamp(15px,1.4vw,18px);
+      line-height:1.25;
+      font-weight:700;
+      color:#3c4a43;
+    }
+
+    .presenters-names span:not(:last-child)::after{
+      content:none;
+    }
+
+    .handout-qr{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-top:24px;
+      padding:14px;
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:18px;
+      background:rgba(255,255,255,.72);
+      box-shadow:0 12px 34px rgba(22,38,29,.09);
+    }
+
+    .handout-qr.centered{
+      margin-top:30px;
+      justify-content:center;
+      text-align:left;
+    }
+
+    .handout-qr.centered img{
+      width:140px;
+      height:140px;
+    }
+
+    .handout-qr.title-qr{
+      margin-top:22px;
+      padding:18px;
+      align-items:center;
+    }
+
+    .handout-qr.title-qr img{
+      width:148px;
+      height:148px;
+    }
+
+    .handout-qr img{
+      width:112px;
+      height:112px;
+      display:block;
+      border-radius:10px;
+      background:#fff;
+      padding:6px;
+      border:1px solid rgba(216,226,220,.9);
+    }
+
+    .handout-link{
+      width:112px;
+      height:112px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:10px;
+      background:#fff;
+      color:var(--green);
+      border:2px solid rgba(47,107,79,.22);
+      text-decoration:none;
+      font-weight:850;
+      font-size:28px;
+    }
+
+    .handout-qr strong{
+      display:block;
+      margin-bottom:5px;
+      color:var(--green);
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .handout-qr span{
+      display:block;
+      max-width:260px;
+      color:#34423b;
+      font-size:clamp(15px,1.45vw,18px);
+      line-height:1.35;
+      font-weight:700;
+    }
+
+    .closing-meta{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:28px;
+      margin-top:18px;
+    }
+
+    .closing-meta .handout-qr,
+    .closing-meta .presenters{
+      margin-top:0!important;
+    }
+
+    .canvas-wrap{
+      position:relative;
+      min-height:520px;
+      padding-bottom:20px;
+    }
+
+    .canvas{
+      display:grid;
+      grid-template-columns:1.05fr 1.1fr 1.1fr 1.05fr .95fr;
+      grid-template-rows:1fr 1fr .8fr;
+      gap:12px;
+      height:min(560px,calc(100vh - 310px));
+      min-height:460px;
+      transition:.25s ease;
+    }
+
+    .tile{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.83);
+      padding:18px;
+      box-shadow:0 9px 28px rgba(32,49,39,.08);
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      transition:.25s ease;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .tile:hover{
+      transform:translateY(-3px);
+      border-color:rgba(47,107,79,.38);
+    }
+
+    .tile.active-tile{
+      transform:scale(1.025);
+      border:2px solid var(--green);
+      box-shadow:0 18px 50px rgba(47,107,79,.22);
+      z-index:3;
+    }
+
+    .canvas.dim .tile:not(.active-tile){
+      filter:blur(2.2px) grayscale(.12);
+      opacity:.42;
+      transform:scale(.985);
+    }
+
+    .tile .icon{
+      font-size:30px;
+      margin-bottom:10px;
+    }
+
+    .tile .title{
+      font-weight:850;
+      font-size:19px;
+      line-height:1.1;
+    }
+
+    .tile .hint{
+      font-size:13px;
+      color:var(--grey);
+      margin-top:10px;
+      line-height:1.35;
+    }
+
+    .partners{grid-row:1/3}
+    .activities{grid-column:2}
+    .resources{grid-column:2;grid-row:2}
+    .value{grid-column:3;grid-row:1/3}
+    .relationships{grid-column:4}
+    .channels{grid-column:4;grid-row:2}
+    .segments{grid-column:5;grid-row:1/3}
+    .costs{grid-column:1/3;grid-row:3}
+    .revenue{grid-column:3/6;grid-row:3}
+
+    .canvas-slide{
+      width:min(1320px,100%);
+      gap:16px;
+    }
+
+    .canvas-slide h2{
+      font-size:clamp(30px,3.2vw,46px);
+    }
+
+    .strategy-canvas,
+    .project-canvas{
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+    }
+
+    .strategy-canvas{
+      grid-template-rows:1fr .82fr .48fr;
+    }
+
+    .strategy-canvas .tile,
+    .project-canvas .tile{
+      padding:14px;
+    }
+
+    .strategy-canvas .tile .icon,
+    .project-canvas .tile .icon{
+      font-size:26px;
+      margin-bottom:7px;
+    }
+
+    .strategy-canvas .tile .title,
+    .project-canvas .tile .title{
+      font-size:clamp(14px,1.25vw,18px);
+    }
+
+    .strategy-canvas .tile .hint,
+    .project-canvas .tile .hint{
+      font-size:clamp(11px,.9vw,13px);
+      margin-top:7px;
+    }
+
+    .strategy-goal{grid-column:1;grid-row:1}
+    .strategy-customers{grid-column:2;grid-row:1}
+    .strategy-focus{grid-column:3;grid-row:1}
+    .strategy-initiatives{grid-column:4;grid-row:1}
+    .strategy-advantages{grid-column:5;grid-row:1}
+    .strategy-market{grid-column:1/3;grid-row:2}
+    .strategy-roadmap{grid-column:3/5;grid-row:2}
+    .strategy-measures{grid-column:5;grid-row:2}
+    .strategy-governance{grid-column:1/6;grid-row:3}
+
+    .project-canvas{
+      grid-template-rows:1fr 1fr .52fr;
+    }
+
+    .project-purpose{grid-column:1;grid-row:1}
+    .project-resources{grid-column:2;grid-row:1}
+    .project-risks{grid-column:3;grid-row:1}
+    .project-customer{grid-column:4;grid-row:1}
+    .project-result{grid-column:5;grid-row:1}
+    .project-budget{grid-column:1;grid-row:2}
+    .project-team{grid-column:2;grid-row:2}
+    .project-environment{grid-column:3;grid-row:2}
+    .project-milestones{grid-column:4;grid-row:2}
+    .project-quality{grid-column:5;grid-row:2}
+    .project-time{grid-column:1/6;grid-row:3}
+
+    .canvas-slide .bubble{
+      width:min(440px,88%);
+      padding:20px;
+      border-radius:24px;
+    }
+
+    .canvas-slide .bubble.wide-bubble{
+      width:min(680px,92%);
+    }
+
+    .canvas-slide .bubble-header{
+      margin-bottom:10px;
+    }
+
+    .canvas-slide .bubble-icon{
+      width:48px;
+      height:48px;
+      font-size:27px;
+    }
+
+    .canvas-slide .bubble h3{font-size:22px}
+    .canvas-slide .bubble p{font-size:15px;line-height:1.34}
+
+    .canvas-slide .bubble ul{
+      font-size:15px;
+      line-height:1.3;
+      margin-top:10px;
+      padding-left:20px;
+    }
+
+    .canvas-slide .bubble li{margin:.25em 0}
+
+    .bubble{
+      position:absolute;
+      left:0;
+      top:0;
+      transform:scale(.96);
+      transform-origin:center;
+      width:min(460px,90%);
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:26px;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .2s ease, transform .25s ease, left .28s ease, top .28s ease;
+      z-index:5;
+      will-change:left,top,transform,opacity;
+    }
+
+    .bubble.show{
+      opacity:1;
+      transform:scale(1);
+      pointer-events:auto;
+    }
+
+    .bubble[data-placement="right"]{transform-origin:left var(--anchor-y,50%)}
+    .bubble[data-placement="left"]{transform-origin:right var(--anchor-y,50%)}
+    .bubble[data-placement="bottom"]{transform-origin:var(--anchor-x,50%) top}
+    .bubble[data-placement="top"]{transform-origin:var(--anchor-x,50%) bottom}
+
+    .bubble::after{
+      content:"";
+      position:absolute;
+      width:11px;
+      height:11px;
+      border-radius:999px;
+      background:var(--green);
+      box-shadow:0 0 0 6px rgba(47,107,79,.12);
+      opacity:0;
+      transition:opacity .2s ease;
+    }
+
+    .bubble.show::after{opacity:1}
+    .bubble[data-placement="right"]::after{left:-6px;top:var(--anchor-y,50%);transform:translateY(-50%)}
+    .bubble[data-placement="left"]::after{right:-6px;top:var(--anchor-y,50%);transform:translateY(-50%)}
+    .bubble[data-placement="bottom"]::after{top:-6px;left:var(--anchor-x,50%);transform:translateX(-50%)}
+    .bubble[data-placement="top"]::after{bottom:-6px;left:var(--anchor-x,50%);transform:translateX(-50%)}
+
+    .bubble-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .bubble-icon{
+      font-size:34px;
+      background:var(--mint);
+      border-radius:16px;
+      width:58px;
+      height:58px;
+      display:grid;
+      place-items:center;
+    }
+
+    .bubble h3{font-size:26px}
+    .bubble p{font-size:17px}
+
+    .bubble ul{
+      font-size:17px;
+      line-height:1.42;
+      margin:14px 0 0;
+      padding-left:22px;
+    }
+
+    .bubble li{margin:.35em 0}
+
+    .close{
+      position:absolute;
+      right:18px;
+      top:16px;
+      border:0;
+      background:#eef5f1;
+      border-radius:999px;
+      width:34px;
+      height:34px;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .grid3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+
+    .mini-card{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:22px;
+      box-shadow:0 10px 30px rgba(32,49,39,.08);
+    }
+
+    .mini-card p{font-size:17px}
+    .mini-card .big{
+      font-size:34px;
+      margin-bottom:12px;
+    }
+
+    .assumption-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    .assumption{
+      padding:7px 10px;
+      border:1px solid #d7e7dc;
+      border-radius:999px;
+      background:rgba(234,244,238,.72);
+      color:var(--green);
+      font-size:clamp(11px,1vw,13px);
+      font-weight:800;
+    }
+
+    .capacity-route{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:12px;
+      align-items:stretch;
+    }
+
+    .capacity-step{
+      position:relative;
+      min-height:170px;
+      padding:22px 18px 18px;
+      background:rgba(255,255,255,.86);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:0 10px 30px rgba(32,49,39,.08);
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .capacity-step:not(:last-child)::after{
+      content:'→';
+      position:absolute;
+      z-index:2;
+      right:-20px;
+      top:50%;
+      width:27px;
+      height:27px;
+      transform:translateY(-50%);
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:var(--green);
+      color:white;
+      font-weight:900;
+      box-shadow:0 5px 14px rgba(47,107,79,.25);
+    }
+
+    .capacity-step:first-child{
+      background:linear-gradient(145deg,var(--green),#214d39);
+      color:white;
+      border-color:transparent;
+    }
+
+    .capacity-step:first-child p,
+    .capacity-step:first-child .capacity-label{color:rgba(255,255,255,.82)}
+
+    .capacity-value{
+      color:var(--green);
+      font-size:clamp(27px,2.7vw,39px);
+      line-height:.98;
+      font-weight:900;
+      letter-spacing:-.04em;
+    }
+
+    .capacity-step:first-child .capacity-value{color:white}
+
+    .capacity-label{
+      color:#34423b;
+      font-size:clamp(14px,1.25vw,17px);
+      line-height:1.25;
+      font-weight:800;
+    }
+
+    .capacity-step p{
+      margin-top:8px;
+      font-size:clamp(12px,1.05vw,14px);
+      line-height:1.3;
+      color:var(--grey);
+    }
+
+    .model-note{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:13px 16px;
+      border-left:4px solid var(--green-2);
+      border-radius:12px;
+      background:rgba(234,244,238,.68);
+      color:#34423b;
+      font-size:clamp(13px,1.25vw,16px);
+      line-height:1.35;
+    }
+
+    .scenario-grid{
+      display:grid;
+      grid-template-columns:1.15fr repeat(3,1fr);
+      gap:12px;
+    }
+
+    .scenario-stat{
+      min-height:130px;
+      padding:18px;
+      border:1px solid var(--line);
+      border-radius:20px;
+      background:white;
+      box-shadow:0 10px 28px rgba(32,49,39,.07);
+    }
+
+    .scenario-stat:first-child{
+      background:var(--dark);
+      color:white;
+      border-color:transparent;
+    }
+
+    .scenario-number{
+      color:var(--green);
+      font-size:clamp(27px,2.8vw,40px);
+      line-height:1;
+      font-weight:900;
+      letter-spacing:-.04em;
+    }
+
+    .scenario-stat:first-child .scenario-number{color:white}
+
+    .scenario-stat p{
+      margin-top:9px;
+      color:var(--grey);
+      font-size:clamp(13px,1.15vw,16px);
+      line-height:1.3;
+    }
+
+    .scenario-stat:first-child p{color:rgba(255,255,255,.72)}
+
+    .value-panel{
+      padding:18px 20px;
+      border:1px solid #cfe2d5;
+      border-radius:22px;
+      background:linear-gradient(135deg,rgba(234,244,238,.92),rgba(255,255,255,.84));
+    }
+
+    .value-equation{
+      color:var(--dark);
+      font-size:clamp(18px,2vw,25px);
+      line-height:1.25;
+      font-weight:850;
+      text-align:center;
+    }
+
+    .value-equation strong{color:var(--green)}
+
+    .value-chain{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:8px;
+      margin-top:15px;
+    }
+
+    .value-link{
+      position:relative;
+      padding:11px 8px;
+      border-radius:14px;
+      background:white;
+      border:1px solid var(--line);
+      color:#34423b;
+      font-size:clamp(11px,1vw,14px);
+      line-height:1.22;
+      text-align:center;
+      font-weight:800;
+    }
+
+    .value-link:not(:last-child)::after{
+      content:'›';
+      position:absolute;
+      right:-9px;
+      top:50%;
+      z-index:2;
+      transform:translateY(-52%);
+      color:var(--green);
+      font-size:24px;
+      font-weight:900;
+    }
+
+    .origin-note{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-top:-4px;
+      padding-top:4px;
+    }
+
+    .origin-item{
+      border-left:3px solid rgba(95,143,107,.35);
+      padding-left:16px;
+    }
+
+    .origin-item strong{
+      display:block;
+      margin-bottom:5px;
+      color:var(--green);
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .origin-item p{
+      font-size:clamp(16px,1.5vw,19px);
+      line-height:1.35;
+      color:#34423b;
+    }
+
+    .question-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .question-card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.86);
+      border-radius:18px;
+      padding:16px;
+      cursor:pointer;
+      box-shadow:0 8px 24px rgba(32,49,39,.07);
+      transition:.2s ease;
+      min-height:132px;
+    }
+
+    .question-card:hover,
+    .question-card.active-question{
+      border-color:rgba(47,107,79,.48);
+      transform:translateY(-2px);
+      box-shadow:0 14px 34px rgba(47,107,79,.14);
+    }
+
+    .question-card .label{
+      font-size:15px;
+      font-weight:850;
+      margin-bottom:8px;
+    }
+
+    .question-card .question{
+      font-size:15px;
+      line-height:1.35;
+      color:#526057;
+    }
+
+    .detail-panel{
+      border:1px solid rgba(47,107,79,.24);
+      border-radius:22px;
+      background:#f9fcfa;
+      padding:20px;
+      box-shadow:0 14px 36px rgba(32,49,39,.08);
+      min-height:146px;
+    }
+
+    .detail-panel h3{
+      font-size:22px;
+      margin:0 0 8px;
+    }
+
+    .detail-panel p{
+      font-size:17px;
+    }
+
+    .network-slide{
+      width:min(1320px,100%);
+      gap:20px;
+    }
+
+    .dependency-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) clamp(270px,24vw,340px);
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .dependency-map{
+      position:relative;
+      height:min(620px,calc(100vh - 245px));
+      min-height:500px;
+      border:1px solid rgba(216,226,220,.9);
+      border-radius:28px;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,.92), rgba(234,244,238,.72)),
+        radial-gradient(circle at 50% 50%, rgba(95,143,107,.18), transparent 44%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .dependency-map::before{
+      content:"";
+      position:absolute;
+      inset:22px;
+      border:1px dashed rgba(47,107,79,.18);
+      border-radius:24px;
+      pointer-events:none;
+    }
+
+    .link-layer{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index:1;
+    }
+
+    .link-line{
+      stroke:rgba(47,107,79,.18);
+      stroke-width:2;
+      stroke-linecap:round;
+      transition:.25s ease;
+    }
+
+    .link-line.active-link{
+      stroke:rgba(47,107,79,.48);
+      stroke-width:2.4;
+      filter:drop-shadow(0 0 5px rgba(47,107,79,.18));
+      stroke-dasharray:9 13;
+      animation:dashFlow 2.4s linear infinite;
+    }
+
+    .link-line.secondary-link{
+      stroke:rgba(47,107,79,.2);
+      stroke-width:1.35;
+      filter:none;
+      stroke-dasharray:4 12;
+      animation:dashFlow 4.8s linear infinite;
+    }
+
+    .edge-arrow{
+      fill:rgba(47,107,79,.58);
+      opacity:.7;
+    }
+
+    .edge-arrow.secondary-arrow{
+      fill:rgba(47,107,79,.3);
+      opacity:.45;
+    }
+
+    .node-bubble{
+      position:absolute;
+      left:var(--x);
+      top:var(--y);
+      transform:translate(-50%,-50%);
+      width:clamp(136px,13vw,184px);
+      min-height:64px;
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:999px;
+      background:rgba(255,255,255,.9);
+      color:var(--dark);
+      box-shadow:0 14px 34px rgba(32,49,39,.11);
+      cursor:pointer;
+      font-weight:850;
+      font-size:clamp(12px,1vw,14px);
+      line-height:1.15;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:12px;
+      z-index:3;
+      animation:floatNode 4.8s ease-in-out infinite;
+      animation-delay:var(--delay);
+      transition:.25s ease;
+      touch-action:none;
+      cursor:grab;
+    }
+
+    .node-content{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      width:100%;
+    }
+
+    .node-icon{
+      font-size:18px;
+      line-height:1;
+      flex:0 0 auto;
+    }
+
+    .node-label{
+      overflow-wrap:normal;
+      hyphens:auto;
+    }
+
+    .node-bubble:hover,
+    .node-bubble.active-node{
+      background:var(--green);
+      color:#fff;
+      border-color:var(--green);
+      transform:translate(-50%,-50%) scale(1.08);
+      box-shadow:0 22px 46px rgba(47,107,79,.28);
+    }
+
+    .node-bubble.dragging-node{
+      cursor:grabbing;
+      animation-play-state:paused;
+      transition:none;
+      z-index:6;
+    }
+
+    .node-bubble.related-node{
+      border-color:rgba(47,107,79,.55);
+      background:#f4faf6;
+      box-shadow:0 18px 38px rgba(47,107,79,.16);
+    }
+
+    .node-bubble.secondary-node{
+      border-color:rgba(47,107,79,.28);
+      background:rgba(248,251,249,.86);
+      box-shadow:0 12px 26px rgba(47,107,79,.08);
+    }
+
+    .stream-tag{
+      position:absolute;
+      left:var(--sx);
+      top:var(--sy);
+      transform:translate(-50%,-50%);
+      padding:7px 11px;
+      border-radius:999px;
+      background:rgba(31,42,37,.82);
+      color:#fff;
+      font-size:12px;
+      font-weight:850;
+      z-index:2;
+      opacity:0;
+      pointer-events:none;
+      box-shadow:0 8px 18px rgba(31,42,37,.16);
+    }
+
+    .stream-tag.active-stream{
+      --stream-opacity:1;
+      animation:streamMove 7.4s ease-in-out infinite;
+      animation-delay:var(--tag-delay);
+    }
+
+    .stream-tag.secondary-stream{
+      --stream-opacity:.42;
+      padding:5px 9px;
+      background:rgba(47,107,79,.58);
+      font-size:11px;
+      box-shadow:0 6px 14px rgba(47,107,79,.1);
+      animation-duration:10.8s;
+    }
+
+    .network-panel{
+      position:relative;
+      left:auto;
+      right:auto;
+      bottom:auto;
+      transform:none;
+      width:auto;
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:24px;
+      background:rgba(255,255,255,.94);
+      box-shadow:0 18px 48px rgba(32,49,39,.14);
+      padding:22px;
+      z-index:4;
+      align-self:stretch;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .network-panel h3{
+      font-size:22px;
+      margin:0 0 10px;
+    }
+
+    .network-panel p{
+      font-size:15px;
+      line-height:1.45;
+    }
+
+    .network-panel .aspect-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .aspect-chip{
+      background:var(--mint);
+      color:var(--green);
+      border:1px solid #d7e7dc;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:850;
+    }
+
+    @keyframes floatNode{
+      0%,100%{translate:0 0}
+      50%{translate:0 -8px}
+    }
+
+    @keyframes dashFlow{
+      to{stroke-dashoffset:-22}
+    }
+
+    @keyframes streamMove{
+      0%{
+        left:var(--sx);
+        top:var(--sy);
+        opacity:0;
+      }
+      16%,82%{opacity:var(--stream-opacity,1)}
+      100%{
+        left:var(--tx);
+        top:var(--ty);
+        opacity:0;
+      }
+    }
+
+    .switch-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .disruption-board{
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:22px;
+      align-items:stretch;
+    }
+
+    .disruption-control,
+    .disruption-output{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.88);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 12px 34px rgba(32,49,39,.09);
+    }
+
+    .scale-labels{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+      font-size:13px;
+      color:var(--grey);
+      font-weight:850;
+    }
+
+    .disruption-range{
+      width:100%;
+      accent-color:var(--green);
+      cursor:pointer;
+    }
+
+    .disruption-meter{
+      height:16px;
+      border-radius:999px;
+      background:#e6efe9;
+      overflow:hidden;
+      margin:22px 0;
+    }
+
+    .disruption-fill{
+      height:100%;
+      width:33%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#8aa893,var(--green));
+      transition:.35s ease;
+    }
+
+    .disruption-state{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-top:20px;
+    }
+
+    .state-icon{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      background:var(--mint);
+      font-size:28px;
+      flex:0 0 auto;
+    }
+
+    .disruption-state h3{
+      font-size:24px;
+      margin:0 0 4px;
+    }
+
+    .disruption-state p,
+    .disruption-output p{
+      font-size:17px;
+    }
+
+    .impact-map{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .impact-node{
+      min-height:76px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#f8fbf9;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:11px;
+      font-size:13px;
+      font-weight:850;
+      color:#7c8781;
+      transition:.28s ease;
+    }
+
+    .impact-node.active-impact{
+      color:var(--dark);
+      background:#fff;
+      border-color:rgba(47,107,79,.5);
+      box-shadow:0 12px 26px rgba(47,107,79,.14);
+      transform:translateY(-2px);
+    }
+
+    .impact-node span:first-child{
+      font-size:18px;
+      line-height:1;
+    }
+
+    .disruption-list{
+      margin:18px 0 0;
+      padding-left:22px;
+      font-size:17px;
+      line-height:1.45;
+    }
+
+    .disruption-list li{
+      margin:.42em 0;
+    }
+
+    .switch-button,
+    .stage-button{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--green);
+      border-radius:999px;
+      padding:11px 16px;
+      font-weight:850;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .switch-button.active-switch,
+    .stage-button.active-stage{
+      background:var(--green);
+      color:#fff;
+      border-color:var(--green);
+      box-shadow:0 10px 26px rgba(47,107,79,.22);
+    }
+
+    .toggle-board{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .digital-slide{
+      width:min(1320px,100%);
+      gap:12px;
+    }
+
+    .digital-slide h2{
+      font-size:clamp(30px,3.2vw,46px);
+      line-height:1.02;
+    }
+
+    .digital-slide .toggle-board{
+      gap:14px;
+    }
+
+    .digital-slide .impact-card{
+      min-height:190px;
+      padding:18px;
+    }
+
+    .digital-slide .impact-card h3{
+      font-size:21px;
+    }
+
+    .digital-slide .impact-card ul{
+      font-size:15px;
+      line-height:1.38;
+      margin-top:10px;
+    }
+
+    .example-card{
+      grid-column:1/-1;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.88);
+      border-radius:22px;
+      padding:16px;
+      box-shadow:0 10px 30px rgba(32,49,39,.08);
+      min-height:260px;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:10px;
+    }
+
+    .example-card h3{
+      font-size:21px;
+      margin:0;
+    }
+
+    .example-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .example-tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+    }
+
+    .example-tab{
+      border:1px solid rgba(96,126,111,.28);
+      background:rgba(255,255,255,.78);
+      border-radius:999px;
+      padding:8px 13px;
+      font:700 13px/1 'Inter',sans-serif;
+      color:#526258;
+      cursor:pointer;
+      transition:.2s ease;
+      white-space:nowrap;
+    }
+
+    .example-tab:hover,
+    .example-tab.active-example{
+      background:#2f6f4e;
+      border-color:#2f6f4e;
+      color:white;
+      box-shadow:0 8px 20px rgba(47,111,78,.18);
+    }
+
+    .example-frame{
+      position:relative;
+      display:none;
+      min-height:min(235px,26vh);
+    }
+
+    .example-frame.active-example-frame{
+      display:block;
+    }
+
+    .iteration-embed{
+      width:100%;
+      height:min(235px,26vh);
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:18px;
+      background:#f7faf8;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);
+    }
+
+    .viewer-link{
+      position:absolute;
+      right:12px;
+      bottom:12px;
+      border:1px solid rgba(255,255,255,.62);
+      border-radius:999px;
+      padding:8px 11px;
+      background:rgba(247,250,248,.88);
+      color:#2f6f4e;
+      font-size:12px;
+      font-weight:800;
+      text-decoration:none;
+      box-shadow:0 8px 22px rgba(32,49,39,.12);
+      backdrop-filter:blur(8px);
+    }
+
+    .impact-card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.88);
+      border-radius:22px;
+      padding:22px;
+      box-shadow:0 10px 30px rgba(32,49,39,.08);
+      min-height:260px;
+    }
+
+    .impact-card h3{
+      font-size:24px;
+    }
+
+    .impact-card ul{
+      margin:14px 0 0;
+      padding-left:22px;
+      font-size:18px;
+      line-height:1.48;
+    }
+
+    .impact-card li{
+      margin:.45em 0;
+    }
+
+    .stage-layout{
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:22px;
+      align-items:stretch;
+    }
+
+    .stage-tabs{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .stage-button{
+      border-radius:18px;
+      text-align:left;
+    }
+
+    .stage-panel{
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:rgba(255,255,255,.88);
+      padding:28px;
+      box-shadow:var(--shadow);
+      min-height:340px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .stage-panel .stage-number{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:var(--mint);
+      color:var(--green);
+      font-weight:900;
+      margin-bottom:18px;
+    }
+
+    .stage-panel p{
+      font-size:19px;
+    }
+
+    .stage-panel ul{
+      margin:18px 0 0;
+      padding-left:22px;
+      font-size:18px;
+      line-height:1.45;
+    }
+
+    .controls{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      z-index:9999;
+      background:rgba(255,255,255,.82);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px;
+      backdrop-filter:blur(10px);
+      box-shadow:0 12px 40px rgba(22,38,29,.15);
+    }
+
+    .controls button{
+      border:0;
+      background:var(--green);
+      color:white;
+      border-radius:999px;
+      padding:10px 16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .controls button.secondary{
+      background:#edf4ef;
+      color:var(--green);
+    }
+
+    .counter{
+      font-weight:800;
+      color:var(--grey);
+      min-width:54px;
+      text-align:center;
+      font-size:14px;
+    }
+
+    .speaker-note{
+      position:fixed;
+      right:18px;
+      bottom:22px;
+      color:#8a948e;
+      font-size:12px;
+      z-index:9999;
+    }
+
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:.01ms!important;
+        animation-iteration-count:1!important;
+        scroll-behavior:auto!important;
+        transition-duration:.01ms!important;
+      }
+    }
+
+    @media(max-height:760px) and (min-width:901px){
+      .slide{padding-top:24px;padding-bottom:92px}
+      .slide-inner{min-height:calc(100dvh - 120px);gap:16px}
+      .hero-card,.stage-panel{padding:22px}
+      .canvas-wrap{min-height:0}
+      .canvas{min-height:360px;height:calc(100dvh - 320px)}
+      .dependency-map{min-height:390px;height:calc(100dvh - 265px)}
+      .handout-qr.title-qr{margin-top:12px;padding:12px}
+      .handout-qr.title-qr img{width:104px;height:104px}
+      .handout-qr.centered{margin-top:14px;padding:10px}
+      .handout-qr.centered img{width:92px;height:92px}
+      .capacity-step{min-height:145px;padding:16px 14px}
+      .scenario-stat{min-height:108px;padding:14px}
+      .value-panel{padding:14px 16px}
+      .value-chain{margin-top:10px}
+      .slide[data-slide="11"] .presenters{margin-top:18px!important}
+      .slide[data-slide="11"] .pillrow{margin-top:18px!important}
+      .slide[data-slide="11"] h3{margin-top:18px!important}
+    }
+
+    @media(max-height:600px) and (min-width:901px){
+      .slide{padding-top:18px;padding-bottom:82px}
+      .slide-inner{gap:12px}
+      .eyebrow{font-size:11px}
+      .controls{bottom:12px}
+      .speaker-note{display:none}
+    }
+
+    @media(max-height:500px) and (min-width:901px){
+      .slide{padding:12px 28px 70px}
+      .pillrow{margin-top:12px}
+      .presenters{margin-top:12px}
+      .origin-note{display:none}
+    }
+
+    @media print{
+      @page{
+        size:16in 9in;
+        margin:0;
+      }
+
+      html,
+      body{
+        width:100%;
+        height:auto;
+        overflow:visible;
+        background:#f7faf8;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+      }
+
+      body{
+        margin:0;
+      }
+
+      .controls,
+      .speaker-note{
+        display:none!important;
+      }
+
+      .deck{
+        width:auto;
+        height:auto;
+        overflow:visible;
+      }
+
+      .slide,
+      .slide.active{
+        position:relative;
+        inset:auto;
+        display:flex!important;
+        opacity:1!important;
+        transform:none!important;
+        transition:none!important;
+        width:100vw;
+        height:100vh;
+        min-height:100vh;
+        padding-bottom:clamp(28px,4vw,64px);
+        break-after:page;
+        page-break-after:always;
+      }
+
+      .slide:last-child{
+        break-after:auto;
+        page-break-after:auto;
+      }
+
+      .slide-inner{
+        min-height:calc(100vh - 128px);
+      }
+    }
+
+    @media(max-width:900px){
+      body{overflow:auto}
+
+      .deck{
+        height:auto;
+        min-height:100vh;
+      }
+
+      .slide{
+        position:relative;
+        min-height:100vh;
+        overflow:visible;
+        padding-bottom:130px;
+      }
+
+      .split,
+      .grid3,
+      .capacity-route,
+      .scenario-grid,
+      .value-chain,
+      .question-grid,
+      .dependency-layout,
+      .toggle-board,
+      .disruption-board,
+      .impact-map,
+      .stage-layout{
+        grid-template-columns:1fr;
+      }
+
+      .capacity-step:not(:last-child)::after,
+      .value-link:not(:last-child)::after{display:none}
+
+      .dependency-map{
+        height:620px;
+      }
+
+      .network-panel{
+        width:auto;
+      }
+
+      .stage-tabs{
+        flex-direction:row;
+        overflow:auto;
+      }
+
+      .stage-button{
+        min-width:180px;
+      }
+
+      .example-card{
+        min-height:330px;
+      }
+
+      .example-head{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .example-tabs{
+        justify-content:flex-start;
+      }
+
+      .example-frame{
+        min-height:290px;
+      }
+
+      .iteration-embed{
+        height:290px;
+      }
+
+      .canvas-wrap{
+        min-height:auto;
+      }
+
+      .canvas{
+        grid-template-columns:1fr;
+        grid-template-rows:auto;
+        height:auto;
+        min-height:auto;
+      }
+
+      .tile{
+        grid-column:auto!important;
+        grid-row:auto!important;
+        min-height:118px;
+      }
+
+      .controls{
+        position:fixed;
+      }
+
+      .speaker-note{
+        display:none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="deck" id="deck">
+    <section class="slide active" data-slide="0" data-note="Enviro-Plan kurz einordnen und die Leitthese als fokussiertes Geschäftsmodell-Upgrade formulieren.">
+      <div class="slide-inner split">
+        <div>
+          <div class="eyebrow">Modul 11740 · Unternehmen organisieren und führen</div>
+          <h1>Enviro-Plan</h1>
+          <p style="margin-top:22px">Strategie-BMC und Projekt-BMC für ein interdisziplinäres Planungs- und Gutachterbüro.</p>
+          <div class="pillrow">
+            <span class="pill">EE · BESS · Netz</span>
+            <span class="pill">Vergabefilterung</span>
+            <span class="pill">Kapazität</span>
+          </div>
+          <div class="presenters" aria-label="Vortragende">
+            <div class="presenters-label">Vortragende</div>
+            <div class="presenters-names">
+              <span>Frederik Wessing</span>
+              <span>Paul Müller</span>
+              <span>Joe Martens</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="hero-card">
+            <h3>Leitthese 2026–2030</h3>
+            <p>Keine radikale Neuausrichtung: Enviro-Plan schärft vorhandene Stärken für komplexe Energie-, Umwelt- und Infrastrukturvorhaben – marktnäher, datenbasierter und skalierbarer.</p>
+          </div>
+          <div class="handout-qr title-qr">
+            <a class="handout-link" href="../generated_appendix/Handout_Strategie_Projekt_BMC_EnviroPlan_from_tex.pdf" target="_blank" rel="noopener" aria-label="Handout als PDF öffnen">PDF</a>
+            <div>
+              <strong>Handout</strong>
+              <span>Hier könnt ihr das passende Strategie-/Projekt-BMC-Handout öffnen.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Enviro-Plan – Strategie- und Projekt-BMC","script":"Unsere Empfehlung ist keine Neuerfindung von Enviro-Plan. Wir bauen auf der vorhandenen interdisziplinären Stärke auf und richten sie gezielter auf Energie-, Speicher-, Netz- und Umweltinfrastruktur aus.","notes":["Fokussiertes Geschäftsmodell-Upgrade statt Neustart","Drei Hebel: Markt, Akquise, interne Kapazität","Strategie-BMC wird in einen konkreten Pilot übersetzt"]}</script>
+    </section>
+
+    <section class="slide" data-slide="1" data-note="Unternehmensprofil über Erfahrung, Referenzen und Interdisziplinarität aufbauen; dann den strategischen Engpass benennen.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Ausgangslage · Unternehmensprofil</div>
+          <h2>Komplexität ist Teil des Wertangebots.</h2>
+          <p class="muted" style="margin-top:14px;max-width:980px">Enviro-Plan bündelt Stadt- und Landschaftsplanung, Tierökologie, Artenschutz, Geodaten, Objektplanung und Umweltbaubegleitung. Für Auftraggeber sinkt damit die Zahl der Schnittstellen in formal anspruchsvollen Verfahren.</p>
+        </div>
+
+        <div class="grid3">
+          <div class="mini-card">
+            <div class="big">30+</div>
+            <h3>Jahre Erfahrung</h3>
+            <p>Gewachsenes Prozesswissen in genehmigungsnaher Planung und Umweltverfahren.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">500+</div>
+            <h3>EE-Projekte</h3>
+            <p>Eine belastbare Referenzbasis für Wind, PV und angrenzende Infrastruktur.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">21</div>
+            <h3>Batteriespeicher-Projekte</h3>
+            <p>Das Wachstumsfeld BESS ist bereits an vorhandene Kompetenz anschlussfähig.</p>
+          </div>
+        </div>
+
+        <div class="origin-note">
+          <div class="origin-item">
+            <strong>Kernstärke</strong>
+            <p>Viele Fachressorts werden als koordinierte Komplettlösung zusammengeführt.</p>
+          </div>
+          <div class="origin-item">
+            <strong>Strategischer Engpass</strong>
+            <p>Fachkräftemangel und interne Übergaben begrenzen Wachstum stärker als fehlende Nachfrage.</p>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Ausgangslage","script":"Enviro-Plan verkauft nicht nur einzelne Pläne oder Gutachten. Der eigentliche Nutzen liegt darin, komplexe Verfahren über mehrere Fachbereiche hinweg koordinierbar und für Auftraggeber handhabbar zu machen.","notes":["Über 30 Jahre Erfahrung","Mehr als 500 EE- und 21 BESS-Projekte","Interdisziplinarität reduziert externe Schnittstellen","Kapazität und interne Koordination sind zentrale Engpässe"]}</script>
+    </section>
+
+    <section class="slide" data-slide="2" data-note="Kacheln anklicken und den Ist-BMC über Wertangebot, Kunden, Ressourcen und Kostenlogik erklären.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Ist-BMC · Interaktiver Canvas</div>
+          <h2>Heute: wertgetrieben und personalintensiv.</h2>
+          <p class="muted">Enviro-Plan schafft Wert durch Fachbreite, Rechtssicherheit und koordinierte Verfahren. Kacheln anklicken, um die verdichtete Ist-Logik zu öffnen.</p>
+        </div>
+
+        <div class="canvas-wrap" data-canvas-type="ist">
+          <div class="canvas" id="canvas">
+            <div class="tile partners" data-key="partners">
+              <div>
+                <div class="icon">🤝</div>
+                <div class="title">Schlüsselpartner</div>
+              </div>
+              <div class="hint">Spezialbüros, Fachgutachter, Argen</div>
+            </div>
+
+            <div class="tile activities" data-key="activities">
+              <div>
+                <div class="icon">🛠️</div>
+                <div class="title">Schlüsselaktivitäten</div>
+              </div>
+              <div class="hint">Analyse, Genehmigung, Koordination</div>
+            </div>
+
+            <div class="tile resources" data-key="resources">
+              <div>
+                <div class="icon">💻</div>
+                <div class="title">Schlüsselressourcen</div>
+              </div>
+              <div class="hint">Fachpersonal, Wissen, GIS, Referenzen</div>
+            </div>
+
+            <div class="tile value" data-key="value">
+              <div>
+                <div class="icon">🌿</div>
+                <div class="title">Wertangebote</div>
+              </div>
+              <div class="hint">Komplexe Verfahren aus einer Hand</div>
+            </div>
+
+            <div class="tile relationships" data-key="relationships">
+              <div>
+                <div class="icon">💬</div>
+                <div class="title">Kundenbeziehungen</div>
+              </div>
+              <div class="hint">Persönlich, beratungsintensiv, langfristig</div>
+            </div>
+
+            <div class="tile channels" data-key="channels">
+              <div>
+                <div class="icon">📡</div>
+                <div class="title">Kanäle</div>
+              </div>
+              <div class="hint">Website, Vergaben, Referenzen, Netzwerk</div>
+            </div>
+
+            <div class="tile segments" data-key="segments">
+              <div>
+                <div class="icon">🏛️</div>
+                <div class="title">Kundensegmente</div>
+              </div>
+              <div class="hint">Kommunen, Behörden, EE-Entwickler</div>
+            </div>
+
+            <div class="tile costs" data-key="costs">
+              <div>
+                <div class="icon">📉</div>
+                <div class="title">Kostenstruktur</div>
+              </div>
+              <div class="hint">Personal dominiert; dazu IT und Feldarbeit</div>
+            </div>
+
+            <div class="tile revenue" data-key="revenue">
+              <div>
+                <div class="icon">💶</div>
+                <div class="title">Einnahmequellen</div>
+              </div>
+              <div class="hint">Projektbezogene Honorare und Zusatzleistungen</div>
+            </div>
+          </div>
+
+          <div class="bubble" id="bubble">
+            <button class="close" id="close" aria-label="Schließen">×</button>
+
+            <div class="bubble-header">
+              <div class="bubble-icon" id="bubbleIcon">🌿</div>
+              <div>
+                <div class="eyebrow" id="bubbleEyebrow">Canvas-Baustein</div>
+                <h3 id="bubbleTitle">Wertangebote</h3>
+              </div>
+            </div>
+
+            <p id="bubbleText">Beschreibung</p>
+            <ul id="bubbleList"></ul>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Ist-BMC von Enviro-Plan","script":"Der Ist-BMC zeigt ein wertgetriebenes Geschäftsmodell. Nicht der niedrigste Preis entscheidet, sondern die Kombination aus Fachbreite, Rechtssicherheit, Prozesskompetenz und Erfahrungswissen.","notes":["Interdisziplinäre Komplettlösung als Wertangebot","Kommunen, Behörden und EE-Entwickler als Kernkunden","Fachpersonal, GIS, Wissen und Referenzen als Schlüsselressourcen","Projektbezogene Honorare bei personalintensiver Kostenstruktur"]}</script>
+    </section>
+
+    <section class="slide" data-slide="3" data-note="Einen BMC-Knoten anklicken und zeigen, wie die interdisziplinäre Komplettlösung die übrigen Bausteine verbindet.">
+      <div class="slide-inner network-slide">
+        <div>
+          <div class="eyebrow">Diagnose · Wechselwirkungen</div>
+          <h2>Die Stärke liegt zwischen den Ressorts.</h2>
+          <p class="muted">Interdisziplinarität reduziert Schnittstellen für Kunden – erzeugt intern aber Anforderungen an Daten, Übergaben, Koordination und Kapazitätsplanung.</p>
+        </div>
+
+        <div class="dependency-layout">
+          <div class="dependency-map" id="dependencyMap">
+            <svg class="link-layer" id="linkLayer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+            <button class="node-bubble active-node" data-node="value" style="--x:50%;--y:48%;--delay:-.6s"><span class="node-content"><span class="node-icon">🌿</span><span class="node-label">Wertangebote</span></span></button>
+            <button class="node-bubble" data-node="segments" style="--x:82%;--y:20%;--delay:-1.4s"><span class="node-content"><span class="node-icon">🏛️</span><span class="node-label">Kunden-<br>segmente</span></span></button>
+            <button class="node-bubble" data-node="relationships" style="--x:84%;--y:48%;--delay:-.2s"><span class="node-content"><span class="node-icon">💬</span><span class="node-label">Kunden-<br>beziehungen</span></span></button>
+            <button class="node-bubble" data-node="channels" style="--x:72%;--y:68%;--delay:-2s"><span class="node-content"><span class="node-icon">📡</span><span class="node-label">Kanäle</span></span></button>
+            <button class="node-bubble" data-node="revenue" style="--x:50%;--y:74%;--delay:-1s"><span class="node-content"><span class="node-icon">💶</span><span class="node-label">Einnahme-<br>quellen</span></span></button>
+            <button class="node-bubble" data-node="costs" style="--x:28%;--y:68%;--delay:-1.8s"><span class="node-content"><span class="node-icon">📉</span><span class="node-label">Kostenstruktur</span></span></button>
+            <button class="node-bubble" data-node="partners" style="--x:16%;--y:48%;--delay:-.4s"><span class="node-content"><span class="node-icon">🤝</span><span class="node-label">Schlüssel-<br>partner</span></span></button>
+            <button class="node-bubble" data-node="activities" style="--x:18%;--y:20%;--delay:-1.2s"><span class="node-content"><span class="node-icon">🛠️</span><span class="node-label">Schlüssel-<br>aktivitäten</span></span></button>
+            <button class="node-bubble" data-node="resources" style="--x:50%;--y:13%;--delay:-.8s"><span class="node-content"><span class="node-icon">💻</span><span class="node-label">Schlüssel-<br>ressourcen</span></span></button>
+          </div>
+
+          <div class="network-panel">
+            <h3 id="networkTitle">Komplettlösung als Zentrum</h3>
+            <p id="networkText">Das Wertangebot verbindet Umweltplanung, Artenschutz, GIS, Genehmigungsmanagement und Projektkoordination zu einem handhabbaren Projektpfad.</p>
+            <div class="aspect-row" id="networkAspects">
+              <span class="aspect-chip">weniger Schnittstellen</span>
+              <span class="aspect-chip">Rechtssicherheit</span>
+              <span class="aspect-chip">Koordination</span>
+              <span class="aspect-chip">Erfahrungswissen</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Geschäftsmodelldiagnose","script":"Die Interdisziplinarität ist zugleich Stärke und organisatorische Aufgabe. Sie reduziert externe Schnittstellen, verlagert Komplexität aber in interne Übergaben, Datenqualität und Ressourcenplanung.","notes":["Komplettlösung senkt Koordinationsaufwand beim Auftraggeber","Interne Übergaben und Datenqualität werden erfolgskritisch","Wertangebot hängt direkt an Fachpersonal und Ressortkoordination","Digitalisierung soll Übergaben stabilisieren, nicht Fachurteile ersetzen"]}</script>
+    </section>
+
+    <section class="slide" data-slide="4" data-note="Den Slider von Säule eins bis drei bewegen und die jeweilige Wirkung im Canvas erläutern.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Strategische Leitidee 2026–2030</div>
+          <h2>Drei Hebel machen das Modell skalierbarer.</h2>
+          <p class="muted">Der Kern bleibt bestehen. Marktposition, Akquise und interne Leistungserbringung werden gezielt weiterentwickelt.</p>
+        </div>
+
+        <div class="disruption-board">
+          <div class="disruption-control">
+            <div class="scale-labels">
+              <span>Marktfokus</span>
+              <span>interne Kapazität</span>
+            </div>
+            <input class="disruption-range" id="disruptionRange" type="range" min="0" max="2" step="1" value="0" aria-label="Wirkung der Digitalisierung" />
+            <div class="disruption-meter">
+              <div class="disruption-fill" id="disruptionFill"></div>
+            </div>
+
+            <div class="disruption-state">
+              <div class="state-icon" id="disruptionIcon">🛠️</div>
+              <div>
+                <h3 id="disruptionTitle">EE/BESS/Netz ausbauen</h3>
+                <p id="disruptionText">Vorhandene Referenzen und Fachkompetenzen werden für wachsende Speicher-, Trassen- und Netzinfrastrukturprojekte fokussiert vermarktet.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="disruption-output">
+            <h3 id="disruptionOutputTitle">Canvas-Wirkung</h3>
+            <p id="disruptionOutputText">Kundensegmente und Wertangebot werden marktschärfer; Aktivitäten und Ressourcen werden auf komplexe EE-/BESS-/Netzverfahren gebündelt.</p>
+
+            <div class="impact-map" id="impactMap">
+              <div class="impact-node active-impact" data-impact-node="activities"><span>🛠️</span><span>Schlüssel-<br>aktivitäten</span></div>
+              <div class="impact-node active-impact" data-impact-node="resources"><span>💻</span><span>Schlüssel-<br>ressourcen</span></div>
+              <div class="impact-node" data-impact-node="value"><span>🌿</span><span>Wertangebote</span></div>
+              <div class="impact-node" data-impact-node="relationships"><span>💬</span><span>Kunden-<br>beziehungen</span></div>
+              <div class="impact-node" data-impact-node="costs"><span>📉</span><span>Kostenstruktur</span></div>
+              <div class="impact-node" data-impact-node="revenue"><span>💶</span><span>Einnahme-<br>quellen</span></div>
+            </div>
+
+            <ul class="disruption-list" id="disruptionList">
+              <li>Stärkere Positionierung bei Projektentwicklern, Netzbetreibern und Kommunen.</li>
+              <li>Komplettlösung: Umwelt, Artenschutz, GIS, Trasse und Genehmigung.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Drei strategische Säulen","script":"Die Strategie besteht aus drei zusammenhängenden Hebeln. Erstens schärfen wir den Markt auf EE, Batteriespeicher und Netze. Zweitens verbessern wir die Auswahl passender Vergaben. Drittens steigern wir die interne Kapazität pro Fachkraft.","notes":["EE/BESS/Netz als anschlussfähiges Wachstumsfeld","KI-gestützte Vergabefilterung verbessert Akquisequalität","Interne Digitalisierung entlastet knappe Fachrollen","Alle drei Säulen verändern mehrere BMC-Bausteine"]}</script>
+    </section>
+
+    <section class="slide" data-slide="5" data-note="Die neun Felder des Strategie-Canvas anklicken und das Zielbild 2026–2030 als zusammenhängende Logik erläutern.">
+      <div class="slide-inner canvas-slide">
+        <div>
+          <div class="eyebrow">Strategie-Canvas · Enviro-Plan 2026–2030</div>
+          <h2>Der Kern bleibt – das Zukunftsbild wird fokussierter.</h2>
+          <p class="muted">Das Strategie-Canvas übersetzt Markt, Ambition, Initiativen und Steuerung in ein gemeinsames Zielbild. Kacheln anklicken für Details.</p>
+        </div>
+
+        <div class="canvas-wrap" data-canvas-type="strategy">
+          <div class="canvas strategy-canvas">
+            <div class="tile strategy-goal" data-key="goal"><div><div class="icon">🎯</div><div class="title">Ziel & Ambition</div></div><div class="hint">Fokussiertes Geschäftsmodell-Upgrade</div></div>
+            <div class="tile strategy-customers" data-key="customers"><div><div class="icon">👥</div><div class="title">Kunden & Nutzen</div></div><div class="hint">Komplexe Projektpfade, weniger Schnittstellen</div></div>
+            <div class="tile strategy-focus" data-key="focus"><div><div class="icon">⭐</div><div class="title">Strategische Fokusfelder</div></div><div class="hint">EE/BESS/Netz · Akquise · Kapazität</div></div>
+            <div class="tile strategy-initiatives" data-key="initiatives"><div><div class="icon">✅</div><div class="title">Strategische Initiativen</div></div><div class="hint">Pilot, Referenzdaten, digitale Workflows</div></div>
+            <div class="tile strategy-advantages" data-key="advantages"><div><div class="icon">🏆</div><div class="title">Wettbewerbsvorteile</div></div><div class="hint">Erfahrung, Fachbreite, Koordination</div></div>
+            <div class="tile strategy-market" data-key="market"><div><div class="icon">🔎</div><div class="title">Markt & Trends</div></div><div class="hint">BESS-/Netzausbau, Fachkräftemangel, Regulierung</div></div>
+            <div class="tile strategy-roadmap" data-key="roadmap"><div><div class="icon">🛣️</div><div class="title">Strategische Roadmap</div></div><div class="hint">Inventur → MVP → Test → selektiver Rollout</div></div>
+            <div class="tile strategy-measures" data-key="measures"><div><div class="icon">📊</div><div class="title">Erfolgsmaße</div></div><div class="hint">Zeit, Trefferqualität, Win-Rate, Auslastung</div></div>
+            <div class="tile strategy-governance" data-key="governance"><div><div class="icon">⚙️</div><div class="title">Umsetzung & Steuerung</div></div><div class="hint">Klare Rollen, Datenverantwortung, Review und Abbruchkriterien</div></div>
+          </div>
+
+          <div class="bubble">
+            <button class="close" aria-label="Schließen">×</button>
+            <div class="bubble-header"><div class="bubble-icon">🎯</div><div><div class="eyebrow">Strategie-Canvas</div><h3>Ziel & Ambition</h3></div></div>
+            <p>Beschreibung</p><ul></ul>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Strategie-Canvas 2026–2030","script":"Das Strategie-Canvas bündelt unsere Empfehlung in neun Feldern. Enviro-Plan bleibt ein interdisziplinäres Planungsbüro, positioniert seine vorhandene Stärke aber gezielter für komplexe Energie-, Speicher-, Netz- und Umweltinfrastrukturprojekte. Digitale Initiativen unterstützen Akquise und Kapazität, ohne das fachliche Urteil zu ersetzen.","notes":["Fokussiertes Upgrade statt radikaler Neuausrichtung","Drei Fokusfelder: EE/BESS/Netz, Vergabefilterung, interne Digitalisierung","Wettbewerbsvorteile beruhen auf Erfahrung, Fachbreite und Koordination","Roadmap und Kennzahlen machen die Strategie steuerbar"]}</script>
+    </section>
+
+    <section class="slide" data-slide="6" data-note="Die elf Felder des Projekt-Canvas anklicken und den begrenzten Pilot zur Vergabefilterung konkret erläutern.">
+      <div class="slide-inner canvas-slide">
+        <div>
+          <div class="eyebrow">Projekt-Canvas · KI-gestützte Vergabefilterung</div>
+          <h2>Aus der Strategie wird ein prüfbarer Pilot.</h2>
+          <p class="muted">Das Projekt-Canvas grenzt Zweck, Ergebnis, Ressourcen, Risiken und Qualitätsregeln ab. Kacheln anklicken für Details.</p>
+        </div>
+
+        <div class="canvas-wrap" data-canvas-type="project">
+          <div class="canvas project-canvas">
+            <div class="tile project-purpose" data-key="purpose"><div><div class="icon">🎯</div><div class="title">Zweck</div></div><div class="hint">Passende Vergaben schneller erkennen</div></div>
+            <div class="tile project-resources" data-key="resources"><div><div class="icon">⚙️</div><div class="title">Ressourcen</div></div><div class="hint">Vergabedaten, Referenzen, System, Fachzeit</div></div>
+            <div class="tile project-risks" data-key="risks"><div><div class="icon">⚠️</div><div class="title">Risiken & Chancen</div></div><div class="hint">Datenqualität absichern, Trefferqualität heben</div></div>
+            <div class="tile project-customer" data-key="customer"><div><div class="icon">👥</div><div class="title">Kunde & Stakeholder</div></div><div class="hint">Geschäftsführung, Vertrieb, Ressortleitungen</div></div>
+            <div class="tile project-result" data-key="result"><div><div class="icon">⭐</div><div class="title">Ergebnis</div></div><div class="hint">Nachvollziehbare Go-/No-Go-Vorlage</div></div>
+            <div class="tile project-budget" data-key="budget"><div><div class="icon">💶</div><div class="title">Budgetlogik</div></div><div class="hint">Pilotaufbau plus laufende Pflege</div></div>
+            <div class="tile project-team" data-key="team"><div><div class="icon">🤝</div><div class="title">Team</div></div><div class="hint">PMO, IT/Datenschutz und Fachressorts</div></div>
+            <div class="tile project-environment" data-key="environment"><div><div class="icon">🌐</div><div class="title">Umfeld</div></div><div class="hint">Vergaberecht, Portale, sensible Projektdaten</div></div>
+            <div class="tile project-milestones" data-key="milestones"><div><div class="icon">🚩</div><div class="title">Meilensteine</div></div><div class="hint">Inventur, MVP, Test, Entscheidung</div></div>
+            <div class="tile project-quality" data-key="quality"><div><div class="icon">✓</div><div class="title">Qualität</div></div><div class="hint">Nachvollziehbar, aktuell, fachlich geprüft</div></div>
+            <div class="tile project-time" data-key="time"><div><div class="icon">🕒</div><div class="title">Zeit</div></div><div class="hint">0–3 Monate Aufbau · 3–6 Test · 6–12 Monate Rollout bei messbarem Nutzen</div></div>
+          </div>
+
+          <div class="bubble">
+            <button class="close" aria-label="Schließen">×</button>
+            <div class="bubble-header"><div class="bubble-icon">🎯</div><div><div class="eyebrow">Projekt-Canvas</div><h3>Zweck</h3></div></div>
+            <p>Beschreibung</p><ul></ul>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Projekt-Canvas – Vergabefilterung","script":"Der Pilot ist bewusst begrenzt. Er durchsucht definierte Vergabequellen, prüft formale und fachliche Passung, ordnet Referenzen und Ressorts zu und erzeugt eine nachvollziehbare Entscheidungsvorlage. Die finale Bewertung bleibt bei Geschäftsführung, Vertrieb und Fachressorts.","notes":["Interne Assistenz statt autonomer Angebotsentscheidung","Klare Ressourcen-, Rollen- und Budgetlogik","Messbare Qualität über Treffer, Nachvollziehbarkeit und Fachprüfung","Rollout nur bei nachgewiesenem Nutzen"]}</script>
+    </section>
+
+    <section class="slide" data-slide="7" data-note="Kostenlogik auf Fachkräfte, IT/Daten und Qualität beziehen; anschließend die Pilot-Kennzahlen nennen.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Kosten · Kapazität · Controlling</div>
+          <h2>Der Engpass ist Fachzeit – nicht Rechenleistung.</h2>
+          <p class="muted" style="margin-top:14px;max-width:980px">Digitalisierung ist wirtschaftlich, wenn sie knappe Fachrollen entlastet, ohne Qualitäts- oder Haftungsrisiken zu erhöhen.</p>
+        </div>
+
+        <div class="grid3">
+          <div class="mini-card">
+            <div class="big">👥</div>
+            <h3>Personal</h3>
+            <p>Größter Kosten- und Engpassfaktor: Planung, Biologie, GIS, UBB, Projektsteuerung und Vertrieb.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">🗂️</div>
+            <h3>IT, GIS & Daten</h3>
+            <p>Referenzdatenbank, Lizenzen, Hosting und Sicherheit werden zu planbaren Strukturkosten.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">✓</div>
+            <h3>Qualität & Freigabe</h3>
+            <p>Schulung, Pflege und fachliche Prüfroutinen sind Voraussetzung für belastbare Ergebnisse.</p>
+          </div>
+        </div>
+
+        <div class="origin-note">
+          <div class="origin-item">
+            <strong>Effizienz messen</strong>
+            <p>Suchzeit pro passender Ausschreibung · Zeit bis Go/No-Go · Pflegeaufwand pro Monat.</p>
+          </div>
+          <div class="origin-item">
+            <strong>Qualität messen</strong>
+            <p>Anteil relevanter Treffer · sauber zugeordnete Referenzen · Bewerbungs- und Win-Rate.</p>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Kosten- und Kapazitätslogik","script":"Für Enviro-Plan zählt nicht, ob ein Tool technisch beeindruckend ist. Entscheidend ist, ob es Such- und Koordinationszeit senkt, Referenzen besser nutzbar macht und knappe Fachrollen entlastet – bei klarer Qualitätssicherung.","notes":["Personal ist größter Kosten- und Engpassfaktor","IT und Daten erzeugen Investitions- und Pflegekosten","Fachliche Freigabe bleibt Teil des Prozesses","Erfolg wird über Zeit, Trefferqualität und Win-Rate gemessen"]}</script>
+    </section>
+
+    <section class="slide" data-slide="8" data-note="Die öffentlich belegten Personalzahlen über transparente Annahmen in verfügbare Planertage und Stunden übersetzen.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Kapazität · öffentliche Personalanker · Modellrechnung</div>
+          <h2>Aus 74 + 9 wird eine belastbare Kapazitätslogik.</h2>
+          <div class="assumption-row" aria-label="Annahmen der Modellrechnung">
+            <span class="assumption">Werkstudierende: 0,5 FTE</span>
+            <span class="assumption">15 % nicht verrechenbare Zeit</span>
+            <span class="assumption">200 Planertage/Jahr</span>
+            <span class="assumption">8 Stunden/Tag</span>
+          </div>
+        </div>
+
+        <div class="capacity-route" aria-label="Kapazitätsrechnung von Mitarbeitenden zu verrechenbaren Stunden">
+          <div class="capacity-step">
+            <div class="capacity-value">74 + 9</div>
+            <div>
+              <div class="capacity-label">Festangestellte + Werkstudierende</div>
+              <p>Öffentlich genannter Personalstand 2024.</p>
+            </div>
+          </div>
+          <div class="capacity-step">
+            <div class="capacity-value">78,5</div>
+            <div>
+              <div class="capacity-label">Gesamt-FTE</div>
+              <p>74 + 9 × 0,5 Vollzeitäquivalente.</p>
+            </div>
+          </div>
+          <div class="capacity-step">
+            <div class="capacity-value">66,7</div>
+            <div>
+              <div class="capacity-label">verrechenbare FTE</div>
+              <p>85 % der rechnerischen Kapazität.</p>
+            </div>
+          </div>
+          <div class="capacity-step">
+            <div class="capacity-value">13.340</div>
+            <div>
+              <div class="capacity-label">Planertage/Jahr</div>
+              <p>66,7 FTE × 200 Tage.</p>
+            </div>
+          </div>
+          <div class="capacity-step">
+            <div class="capacity-value">106.720</div>
+            <div>
+              <div class="capacity-label">Stunden/Jahr</div>
+              <p>13.340 Tage × 8 Stunden.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="model-note"><strong>Einordnung:</strong> Diese Rechnung ist ein transparentes Kapazitätsmodell auf Basis öffentlicher Personalanker – keine interne Enviro-Plan-Finanzrechnung.</div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Kapazität in Zahlen","script":"Mit öffentlich genannten Personalzahlen und klar sichtbaren Annahmen lässt sich die Größenordnung der verfügbaren Fachkapazität abschätzen. Aus 74 Festangestellten und neun Werkstudierenden entstehen rechnerisch 78,5 FTE, davon rund 66,7 verrechenbar. Das entspricht etwa 13.340 Planertagen oder 106.720 Stunden pro Jahr. Es handelt sich ausdrücklich um ein Modell, nicht um eine interne Unternehmensrechnung.","notes":["Öffentliche Personalanker: 74 Festangestellte und 9 Werkstudierende","Transparente Annahmen zu FTE, Gemeinkosten, Tagen und Stunden","Modellkapazität: 66,7 verrechenbare FTE","13.340 Planertage beziehungsweise 106.720 Stunden pro Jahr","Keine interne Enviro-Plan-Finanzrechnung"]}</script>
+    </section>
+
+    <section class="slide" data-slide="9" data-note="Das Kostenszenario klar als Modell kennzeichnen und den wirtschaftlichen KI-Nutzen als Wirkungskette erläutern.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Kostenszenario · Wertbeitrag der Vergabefilterung</div>
+          <h2>Was muss ein Planertag im Szenario tragen?</h2>
+          <p class="muted" style="margin-top:12px;max-width:1020px">Die Modellkapazität übersetzt eine angenommene Kostenbasis in eine wirtschaftliche Untergrenze – und macht den Nutzen der Vergabefilterung messbar.</p>
+        </div>
+
+        <div class="scenario-grid" aria-label="Kostenszenario pro Stunde und Planertag">
+          <div class="scenario-stat">
+            <div class="scenario-number">8,1 Mio. €</div>
+            <p>angenommene jährliche Kostenbasis des Szenarios</p>
+          </div>
+          <div class="scenario-stat">
+            <div class="scenario-number">75,90 €</div>
+            <p>rechnerische Kosten je verrechenbarer Stunde</p>
+          </div>
+          <div class="scenario-stat">
+            <div class="scenario-number">607 €</div>
+            <p>rechnerische Kosten je Planertag</p>
+          </div>
+          <div class="scenario-stat">
+            <div class="scenario-number">714 €</div>
+            <p>Planertag inklusive 15 % Sicherheits-/Margenaufschlag</p>
+          </div>
+        </div>
+
+        <div class="value-panel">
+          <div class="value-equation"><strong>KI-Nutzen</strong> = Zeitgewinn + bessere Treffer-/Win-Rate − laufende System- und Pflegekosten</div>
+          <div class="value-chain" aria-label="Wirkungskette der KI-gestützten Vergabefilterung">
+            <div class="value-link">weniger Suchzeit</div>
+            <div class="value-link">schnellere Go-/No-Go-Entscheidung</div>
+            <div class="value-link">bessere Projektpassung</div>
+            <div class="value-link">höhere Angebotsqualität</div>
+            <div class="value-link">mehr Deckungsbeitrag je Fachstunde</div>
+          </div>
+        </div>
+
+        <div class="model-note"><strong>Wichtig:</strong> 8,1 Mio. € sind eine Szenarioannahme aus dem Handout, keine veröffentlichte oder interne Enviro-Plan-Kostenangabe.</div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Kostenszenario und KI-Nutzen","script":"Unter der angenommenen Kostenbasis von 8,1 Millionen Euro ergeben sich rechnerisch 75,90 Euro je verrechenbarer Stunde und rund 607 Euro je Planertag. Mit einem Sicherheits- und Margenaufschlag von 15 Prozent liegt der Zielwert bei etwa 714 Euro. Diese Werte sind ein Szenario. Der wirtschaftliche Nutzen der Vergabefilterung entsteht, wenn weniger Suchzeit, bessere Treffer und eine höhere Win-Rate die laufenden System- und Pflegekosten übersteigen und Fachzeit auf Projekte mit besserer Passung und höherem Deckungsbeitrag gelenkt wird.","notes":["8,1 Millionen Euro sind eine Szenarioannahme","75,90 Euro je Stunde und 607 Euro je Planertag","714 Euro je Planertag inklusive 15 Prozent Aufschlag","KI-Nutzen verbindet Zeitgewinn, Trefferqualität und Win-Rate","Knappe Fachzeit wird auf Projekte mit besserer Passung und höherem Deckungsbeitrag gelenkt"]}</script>
+    </section>
+
+    <section class="slide" data-slide="10" data-note="Roadmap von Dateninventur bis Rollout erläutern und die vier wichtigsten Risiken direkt mit Gegenmaßnahmen koppeln.">
+      <div class="slide-inner split">
+        <div>
+          <div class="eyebrow">Roadmap · 0 bis 12 Monate</div>
+          <h2>Erst Daten ordnen, dann automatisieren.</h2>
+          <div style="display:grid;gap:14px;margin-top:24px">
+            <div class="origin-item"><strong>0–1 Monat · Inventur</strong><p>Vergabequellen, Referenzen, Datenklassen, Rollen und Go-/No-Go-Kriterien klären.</p></div>
+            <div class="origin-item"><strong>1–3 Monate · MVP</strong><p>Referenzschema, Schlagworte und erste Such-/Matching-Regeln aufbauen.</p></div>
+            <div class="origin-item"><strong>3–6 Monate · Testbetrieb</strong><p>Reale Ausschreibungen prüfen; Suchzeit, Trefferqualität und Entscheidungen auswerten.</p></div>
+            <div class="origin-item"><strong>6–12 Monate · Skalierung</strong><p>Nur bei messbarem Nutzen auf KommunalGIS, Kompensation und weitere Segmente ausrollen.</p></div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="eyebrow">Risiken aktiv begrenzen</div>
+          <h3 style="margin-top:8px">Vier Bedingungen für den Pilot</h3>
+          <ul style="margin:14px 0 0;padding-left:20px;font-size:17px;line-height:1.45;color:#34423b">
+            <li><strong>Datenschutz:</strong> Datenklassen, Zugriff, Hosting und Löschung vorab definieren.</li>
+            <li><strong>Datenqualität:</strong> Referenzsteckbriefe, Verantwortliche und Pflegezyklus festlegen.</li>
+            <li><strong>Überstandardisierung:</strong> Nur Suche und Vorbereitung standardisieren – nicht das Fachurteil.</li>
+            <li><strong>Akzeptanz:</strong> Entlastung sichtbar machen und Fachressorts am Pilot beteiligen.</li>
+          </ul>
+          <div class="pillrow" style="margin-top:22px"><span class="pill">Rollout</span><span class="pill">Anpassen</span><span class="pill">Abbrechen</span></div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Roadmap und Risiken","script":"Die Reihenfolge ist entscheidend: Zuerst werden Daten, Verantwortlichkeiten und Kriterien geklärt. Danach entsteht ein kleines, fachlich geprüftes MVP. Erst reale Messwerte rechtfertigen einen Rollout.","notes":["0–1 Monat: Daten- und Prozessinventur","1–3 Monate: MVP mit manueller Fachprüfung","3–6 Monate: Test anhand realer Vergaben","6–12 Monate: selektiver Rollout","Datenschutz, Datenqualität, Überstandardisierung und Akzeptanz aktiv steuern"]}</script>
+    </section>
+
+    <section class="slide" data-slide="11" data-note="Mit dem fokussierten Business-Model-Upgrade schließen und zur Diskussion überleiten.">
+      <div class="slide-inner" style="justify-content:center;text-align:center;align-items:center">
+        <div class="eyebrow">Fazit</div>
+        <h2 style="max-width:980px">Marktschärfer. Datenbasierter. Skalierbarer.</h2>
+        <p class="muted" style="margin-top:18px;max-width:900px">Enviro-Plan besitzt bereits die fachliche Substanz. Der strategische Nutzen entsteht, wenn vorhandene Referenzen und Ressortkompetenzen gezielter in passende Projekte übersetzt werden – ohne die fachliche Verantwortung zu automatisieren.</p>
+        <div class="pillrow" style="justify-content:center;margin-top:30px">
+          <span class="pill">EE/BESS/Netz fokussieren</span>
+          <span class="pill">Vergaben besser auswählen</span>
+          <span class="pill">Fachzeit wirksamer einsetzen</span>
+        </div>
+        <h3 style="margin-top:34px;color:var(--green)">Vielen Dank.</h3>
+        <div class="closing-meta">
+          <div class="handout-qr centered">
+            <a class="handout-link" href="../generated_appendix/Handout_Strategie_Projekt_BMC_EnviroPlan_from_tex.pdf" target="_blank" rel="noopener" aria-label="Handout als PDF öffnen">PDF</a>
+            <div>
+              <strong>Handout</strong>
+              <span>Hier könnt ihr das passende Strategie-/Projekt-BMC-Handout öffnen.</span>
+            </div>
+          </div>
+          <div class="presenters" aria-label="Vortragende" style="text-align:left">
+            <div class="presenters-label">Vortragende</div>
+            <div class="presenters-names">
+              <span>Frederik Wessing</span>
+              <span>Paul Müller</span>
+              <span>Joe Martens</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <script type="application/json" class="slide-notes">{"title":"Fazit","script":"Enviro-Plan hat die fachliche Substanz für diese Strategie bereits. Der Hebel liegt darin, Marktchancen gezielter zu erkennen, Referenzen besser nutzbar zu machen und knappe Fachzeit wirksamer einzusetzen. Genau dafür verbindet das Strategie-BMC den Marktfokus mit einem klar begrenzten Pilotprojekt.","notes":["Keine radikale Neuausrichtung","Vorhandene Kompetenzen werden marktschärfer organisiert","Vergabefilterung verbindet Strategie mit konkreter Umsetzung","Fachliche Verantwortung bleibt beim Menschen"]}</script>
+    </section>
+  </main>
+
+  <nav class="controls">
+    <button class="secondary" id="prev">←</button>
+    <span class="counter" id="counter">1 / 12</span>
+    <button class="secondary" id="exportPdf" type="button">PDF</button>
+    <button id="next">→</button>
+  </nav>
+
+  <div class="speaker-note" id="note">Taste N: Notiz anzeigen</div>
+
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const initialIndex = Number(window.location.hash.replace('#',''));
+    let index = Number.isInteger(initialIndex) && initialIndex >= 0 && initialIndex < slides.length ? initialIndex : 0;
+    let showNotes = false;
+
+    const counter = document.getElementById('counter');
+    const note = document.getElementById('note');
+
+    function update(){
+      slides.forEach((s,i)=>s.classList.toggle('active',i===index));
+      counter.textContent = `${index+1} / ${slides.length}`;
+      note.textContent = showNotes ? slides[index].dataset.note : 'Taste N: Notiz anzeigen';
+      window.location.hash = index;
+      const notesBlock = slides[index].querySelector('.slide-notes');
+      if(notesBlock){
+        try{
+          const presenterNotes = JSON.parse(notesBlock.textContent);
+          console.groupCollapsed(`Folie ${index + 1}: ${presenterNotes.title}`);
+          console.log(presenterNotes.script);
+          presenterNotes.notes.forEach(item => console.log(`• ${item}`));
+          console.groupEnd();
+        }catch(error){
+          console.warn('Sprecherhinweise konnten nicht gelesen werden.', error);
+        }
+      }
+      closeBubble();
+    }
+
+    function goTo(target){
+      index = Math.max(0, Math.min(slides.length - 1, Number(target)));
+      update();
+    }
+
+    function next(){ goTo(index + 1); }
+    function prev(){ goTo(index - 1); }
+
+    document.getElementById('next').onclick = next;
+    document.getElementById('prev').onclick = prev;
+
+    document.getElementById('exportPdf')?.addEventListener('click', () => {
+      window.print();
+    });
+
+    window.addEventListener('keydown', e => {
+      if(e.key === 'ArrowRight' || e.key === ' '){
+        next();
+      }
+
+      if(e.key === 'ArrowLeft'){
+        prev();
+      }
+
+      if(e.key.toLowerCase() === 'n'){
+        showNotes = !showNotes;
+        update();
+      }
+
+      if(e.key === 'Escape'){
+        closeBubble();
+      }
+    });
+
+    const data = {
+      partners:{
+        icon:'🤝',
+        title:'Schlüsselpartner',
+        text:'Partner ergänzen Spezialwissen und federn Leistungsspitzen ab, ohne die koordinierende Rolle von Enviro-Plan aufzulösen.',
+        list:[
+          'Architektur- und Ingenieurbüros, Wasser-/Abwasserplaner',
+          'Fachgutachter, Arbeitsgemeinschaften und Verbände',
+          'Fachbehörden und kommunale Netzwerke',
+          'Naturschutzbehörden'
+        ]
+      },
+      activities:{
+        icon:'🛠️',
+        title:'Schlüsselaktivitäten',
+        text:'Die Aktivitäten verbinden fachliche Analyse, Genehmigungslogik, Geodaten und Projektkoordination.',
+        list:[
+          'Raumwiderstands-, Umwelt- und Artenschutzanalysen',
+          'Bauleit-, Trassen- und Genehmigungsplanung',
+          'GIS, Visualisierung, Umweltbaubegleitung und Projektsteuerung'
+        ]
+      },
+      resources:{
+        icon:'💻',
+        title:'Schlüsselressourcen',
+        text:'Die wertvollsten Ressourcen sind Menschen, Erfahrungswissen, Daten und belastbare Referenzen.',
+        list:[
+          'Interdisziplinäres Fachpersonal und Ressortwissen',
+          'GIS-/Geodatenkompetenz und interne Datenbestände',
+          'EE-/BESS-Referenzen, Reputation und Partnernetzwerk'
+        ]
+      },
+      value:{
+        icon:'🌿',
+        title:'Wertangebote',
+        text:'Enviro-Plan macht komplexe, genehmigungsnahe Vorhaben über mehrere Fachressorts hinweg handhabbar.',
+        list:[
+          'Interdisziplinäre Planung aus einer koordinierten Hand',
+          'Weniger Schnittstellen und frühere Konflikterkennung',
+          'Rechtssichere Unterlagen und bessere Entscheidungsgrundlagen'
+        ]
+      },
+      relationships:{
+        icon:'💬',
+        title:'Kundenbeziehungen',
+        text:'Komplexe Verfahren benötigen feste Ansprechpartner, Vertrauen und kontinuierliche Abstimmung.',
+        list:[
+          'Persönliche Projektleitung und enge Behördenabstimmung',
+          'Langfristige Beziehungen und wiederkehrende Auftraggeber',
+          'Rahmen-, Abruf- und projektbezogene Zusammenarbeit'
+        ]
+      },
+      channels:{
+        icon:'📡',
+        title:'Kanäle',
+        text:'Sichtbarkeit entsteht vor allem über Referenzen, Vergabeverfahren und persönliche Netzwerke.',
+        list:[
+          'Website und strukturierte Referenzdarstellung',
+          'Ausschreibungen und Interessenbekundungen',
+          'Partnernetzwerke, Empfehlungen und Direktkontakte'
+        ]
+      },
+      segments:{
+        icon:'🏛️',
+        title:'Kundensegmente',
+        text:'Kernkunden tragen komplexe öffentliche, energiebezogene oder genehmigungsnahe Vorhaben.',
+        list:[
+          'Kommunen, Verbandsgemeinden und Behörden',
+          'EE-Projektentwickler und Energieunternehmen',
+          'Öffentliche und private Vorhabenträger'
+        ]
+      },
+      costs:{
+        icon:'📉',
+        title:'Kostenstruktur',
+        text:'Die Kostenstruktur ist personalintensiv; Feldarbeit, IT/GIS und Qualitätssicherung ergänzen den Schwerpunkt.',
+        list:[
+          'Hochqualifizierte Fachkräfte und Projektkoordination',
+          'Feldarbeit, Kartierung, IT/GIS und Datenhaltung',
+          'Akquise, Weiterbildung, Qualität und externe Leistungen'
+        ]
+      },
+      revenue:{
+        icon:'💶',
+        title:'Einnahmequellen',
+        text:'Projektbezogene Honorare sind der Kern; wiederkehrende und paketierte Zusatzleistungen sind ausbaufähig.',
+        list:[
+          'Planung, Gutachten und Genehmigungsunterlagen',
+          'Kartierung, GIS/Visualisierung, UBB und Projektsteuerung',
+          'Monitoring, Datenpflege und Kompensationsmanagement'
+        ]
+      }
+    };
+
+    const strategyCanvasData = {
+      goal:{
+        icon:'🎯',
+        title:'Ziel & Ambition',
+        text:'Enviro-Plan entwickelt das bestehende interdisziplinäre Modell gezielt weiter, statt es grundlegend neu zu erfinden.',
+        list:[
+          'Komplexe EE-, BESS-, Netz- und Umweltinfrastruktur fokussieren',
+          'Marktposition und Referenznutzung schärfen',
+          'Kapazität pro Fachkraft erhöhen',
+          'Fachliche Verantwortung und Qualität erhalten'
+        ]
+      },
+      customers:{
+        icon:'👥',
+        title:'Kunden & Nutzen',
+        text:'Priorisiert werden Auftraggeber mit komplexen Genehmigungs-, Umwelt- und Koordinationsanforderungen.',
+        list:[
+          'EE-Projektentwickler, Energieversorger und Netzbetreiber',
+          'Kommunen, Behörden und öffentliche Vorhabenträger',
+          'Weniger Schnittstellen durch koordinierte Fachressorts',
+          'Frühere Konflikterkennung und bessere Entscheidungsgrundlagen',
+          'Verlässliche, genehmigungsfähige Projektpfade'
+        ]
+      },
+      focus:{
+        icon:'⭐',
+        title:'Strategische Fokusfelder',
+        text:'Drei Säulen verbinden Marktwachstum mit einer besseren Akquise- und Leistungssystematik.',
+        list:[
+          'EE-, Batteriespeicher- und Netzinfrastruktur ausbauen',
+          'KI-gestützte Vergabefilterung und Referenzzuordnung',
+          'Interne Digitalisierung zur Kapazitätssteigerung',
+          'Optional: Kompensation, Ökopunkte und kommunales Flächenmanagement'
+        ]
+      },
+      initiatives:{
+        icon:'✅',
+        title:'Strategische Initiativen',
+        text:'Die Strategie wird über begrenzte, überprüfbare Maßnahmen in bestehende Abläufe übersetzt.',
+        list:[
+          'Pilot für Vergabefilterung und Referenzmatching',
+          'Strukturierte Referenzsteckbriefe und Schlagwortlogik',
+          'Paketierte Quick-Checks und Genehmigungsfahrpläne',
+          'GIS-, Berichts- und Wissensworkflows beschleunigen',
+          'Datenschutz-, Freigabe- und Pflegeprozesse definieren'
+        ]
+      },
+      advantages:{
+        icon:'🏆',
+        title:'Wettbewerbsvorteile',
+        text:'Das Zukunftsbild baut auf bereits vorhandenen, schwer imitierbaren Fähigkeiten auf.',
+        list:[
+          'Über 30 Jahre Erfahrung',
+          'Mehr als 500 EE- und 21 Batteriespeicher-Projekte',
+          'Interdisziplinäre Ressorts und koordinierte Komplettleistung',
+          'GIS-, Umwelt-, Artenschutz- und Genehmigungskompetenz',
+          'Reputation, Referenzen und gewachsene Netzwerke'
+        ]
+      },
+      market:{
+        icon:'🔎',
+        title:'Markt & Trends',
+        text:'Das Umfeld eröffnet Wachstum, setzt dem Modell aber gleichzeitig klare Grenzen und Bedingungen.',
+        list:[
+          'Wachsende Batteriespeicher-, Netz- und Infrastrukturvorhaben',
+          'Hohe regulatorische und politische Abhängigkeit im EE-Markt',
+          'Fachkräftemangel als zentraler Wachstumsengpass',
+          'Digitale Vergabeprozesse und steigende Datenmengen',
+          'Datenschutz und Datenqualität als Gestaltungsbedingungen'
+        ]
+      },
+      roadmap:{
+        icon:'🛣️',
+        title:'Strategische Roadmap',
+        text:'Die Entwicklung folgt einer Lernlogik: erst ordnen, dann testen und nur bei messbarem Nutzen skalieren.',
+        list:[
+          '0–1 Monat: Daten-, Quellen- und Prozessinventur',
+          '1–3 Monate: Referenzschema und MVP aufbauen',
+          '3–6 Monate: Testbetrieb mit realen Ausschreibungen',
+          '6–12 Monate: selektiver Rollout auf weitere Segmente'
+        ]
+      },
+      measures:{
+        icon:'📊',
+        title:'Erfolgsmaße',
+        text:'Erfolg wird über Akquisequalität, Zeitgewinn und die Entlastung knapper Fachrollen gemessen.',
+        list:[
+          'Suchzeit pro passender Ausschreibung',
+          'Anteil relevanter Treffer',
+          'Zeit bis zur Go-/No-Go-Entscheidung',
+          'Qualität der Referenzzuordnung und Win-Rate',
+          'Pflegeaufwand im Verhältnis zum Akquisenutzen'
+        ]
+      },
+      governance:{
+        icon:'⚙️',
+        title:'Umsetzung & Steuerung',
+        text:'Die Strategie braucht klare Verantwortung, regelmäßige Überprüfung und verbindliche Qualitätsgrenzen.',
+        list:[
+          'Geschäftsführung und Vertrieb setzen Prioritäten',
+          'Ressortleitungen prüfen fachliche Passung und Kapazität',
+          'Benannte Verantwortung für Daten, System und Datenschutz',
+          'Regelmäßige Reviews von Nutzen, Qualität und Risiken',
+          'Anpassen oder abbrechen, wenn Trefferqualität und Aufwand nicht überzeugen'
+        ]
+      }
+    };
+
+    const projectCanvasData = {
+      purpose:{
+        icon:'🎯',
+        title:'Zweck',
+        text:'Der Pilot soll passende Verfahren früher erkennen und die Angebotsentscheidung fundierter vorbereiten.',
+        list:[
+          'Vergabebekanntmachungen schneller sichten und priorisieren',
+          'Passung zu EE, BESS, Trasse und Umweltplanung prüfen',
+          'Referenzen und benötigte Ressorts früh zuordnen',
+          'Suchaufwand reduzieren und Chancen weniger häufig übersehen',
+          'Keine autonome Angebotsentscheidung'
+        ]
+      },
+      resources:{
+        icon:'⚙️',
+        title:'Ressourcen',
+        text:'Das Projekt verbindet öffentliche Vergabedaten mit internem Wissen und einer verbindlichen Prüfroutine.',
+        list:[
+          'Definierte Vergabeplattformen und Bekanntmachungsquellen',
+          'Strukturierte Referenzdatenbank und Projektsteckbriefe',
+          'Such-/KI-System und sichere IT-Umgebung',
+          'Vertrieb, PMO, Ressortleitungen und Datenschutzkompetenz',
+          'Zeit für Datenpflege, Schulung und Qualitätssicherung'
+        ]
+      },
+      risks:{
+        icon:'⚠️',
+        title:'Risiken & Chancen',
+        text:'Der Nutzen entsteht nur, wenn Trefferqualität und Datenpflege besser sind als der zusätzliche Prozessaufwand.',
+        list:[
+          'Risiko: sensible Referenz- und Projektdaten',
+          'Risiko: unpassende Treffer oder Scheingenauigkeit',
+          'Risiko: hoher Pflegeaufwand und geringe Akzeptanz',
+          'Chance: kürzere Such- und Entscheidungszeit',
+          'Chance: bessere Referenznutzung und höhere Bewerbungsqualität'
+        ]
+      },
+      customer:{
+        icon:'👥',
+        title:'Kunde & Stakeholder',
+        text:'Das System dient internen Entscheidern; externe Auftraggeber profitieren indirekt von passenderen Angeboten.',
+        list:[
+          'Sponsor und Auftraggeber: Geschäftsführung',
+          'Hauptnutzer: Vertrieb und PMO',
+          'Fachprüfung: Ressortleitungen und Projektverantwortliche',
+          'Mitwirkung: IT, Datenschutz und Referenzdatenpflege',
+          'Externer Nutzen: passendere, fundiertere Angebote'
+        ]
+      },
+      result:{
+        icon:'⭐',
+        title:'Ergebnis',
+        text:'Das Projektergebnis ist eine nachvollziehbare Entscheidungsvorlage, kein automatisches Urteil.',
+        list:[
+          'Priorität: passt gut / prüfen / eher nicht passend',
+          'Begründete fachliche und formale Passung',
+          'Passende Referenzen und benötigte Fachressorts',
+          'Fristen, Ausschlussgründe und offene Prüfpunkte',
+          'Vorlage für die menschliche Go-/No-Go-Entscheidung'
+        ]
+      },
+      budget:{
+        icon:'💶',
+        title:'Budgetlogik',
+        text:'Die Budgetdarstellung bleibt bewusst ohne Scheingenauigkeit und trennt Aufbau von laufendem Betrieb.',
+        list:[
+          'Einmalig: Systemauswahl und Pilotkonfiguration',
+          'Einmalig: Datenstruktur, Referenzaufbereitung und Schulung',
+          'Laufend: Lizenzen oder Hosting',
+          'Laufend: Datenpflege und Qualitätssicherung',
+          'Bewertung über Zeitgewinn und verbesserte Akquisequalität'
+        ]
+      },
+      team:{
+        icon:'🤝',
+        title:'Team',
+        text:'Ein kleines, fachübergreifendes Pilotteam verbindet Prozessverantwortung, Technik und Fachprüfung.',
+        list:[
+          'Projektverantwortung aus Geschäftsführung oder Vertrieb',
+          'PMO/Akquise als Prozessowner',
+          'Ressortleitungen für Kriterien und Freigabe',
+          'IT- und Datenschutzverantwortliche',
+          'Optional externer IT- oder Vergabedatenpartner'
+        ]
+      },
+      environment:{
+        icon:'🌐',
+        title:'Umfeld',
+        text:'Der Pilot arbeitet in einem fragmentierten und rechtlich sensiblen Vergabe- und Datenumfeld.',
+        list:[
+          'Mehrere öffentliche Vergabeportale und Interessenbekundungen',
+          'Vergaberechtliche Eignungs- und Ausschlusskriterien',
+          'Sensible Projekt-, Kunden- und Referenzinformationen',
+          'Wachsender EE-/BESS-/Netzmarkt',
+          'Begrenzte Fachkapazität für Akquise und Prüfung'
+        ]
+      },
+      milestones:{
+        icon:'🚩',
+        title:'Meilensteine',
+        text:'Jeder Meilenstein erzeugt ein prüfbares Ergebnis und eine bewusste Fortsetzungsentscheidung.',
+        list:[
+          'Quellen, Rollen und Kriterienkatalog freigegeben',
+          'Referenzschema und Datenklassen definiert',
+          'MVP mit manueller Fachprüfung einsatzbereit',
+          'Reale Ausschreibungen ausgewertet',
+          'Entscheidung: Rollout, Anpassung oder Abbruch'
+        ]
+      },
+      quality:{
+        icon:'✓',
+        title:'Qualität',
+        text:'Qualität bedeutet nachvollziehbare Quellen, aktuelle Daten und eine verlässliche menschliche Freigabe.',
+        list:[
+          'Treffer und Begründungen bleiben prüfbar',
+          'Referenzdaten besitzen Verantwortliche und Pflegezyklus',
+          'Falsch-positive und übersehene Treffer werden ausgewertet',
+          'Fachliche und wirtschaftliche Entscheidung bleibt menschlich',
+          'Keine Nutzung ungeklärter Datenklassen'
+        ]
+      },
+      time:{
+        icon:'🕒',
+        title:'Zeit',
+        text:'Der Zeitplan kombiniert einen schnellen Aufbau mit ausreichend realem Testbetrieb.',
+        list:[
+          '0–1 Monat: Inventur und Pilotabgrenzung',
+          '1–3 Monate: Datenstruktur, Regeln und MVP',
+          '3–6 Monate: Test mit realen Vergaben',
+          '6–12 Monate: Rollout nur bei messbarem Nutzen'
+        ]
+      }
+    };
+
+    const canvasDataByType = {
+      ist:data,
+      strategy:strategyCanvasData,
+      project:projectCanvasData
+    };
+    const canvasInstances = [];
+
+    function positionBubble(bubble, canvasWrap, tile){
+      if(!bubble || !canvasWrap || !tile) return;
+
+      const wrapRect = canvasWrap.getBoundingClientRect();
+      const tileRect = tile.getBoundingClientRect();
+      bubble.classList.toggle('wide-bubble', tileRect.width > wrapRect.width * .7);
+      const bubbleWidth = bubble.offsetWidth;
+      const bubbleHeight = bubble.offsetHeight;
+      const gap = 18;
+      const margin = 10;
+      const source = {
+        left:tileRect.left - wrapRect.left,
+        top:tileRect.top - wrapRect.top,
+        right:tileRect.right - wrapRect.left,
+        bottom:tileRect.bottom - wrapRect.top
+      };
+      source.centerX = (source.left + source.right) / 2;
+      source.centerY = (source.top + source.bottom) / 2;
+
+      const candidates = {
+        right:{x:source.right + gap,y:source.centerY - bubbleHeight / 2},
+        left:{x:source.left - gap - bubbleWidth,y:source.centerY - bubbleHeight / 2},
+        bottom:{x:source.centerX - bubbleWidth / 2,y:source.bottom + gap},
+        top:{x:source.centerX - bubbleWidth / 2,y:source.top - gap - bubbleHeight}
+      };
+
+      let preference;
+      if(source.centerX < wrapRect.width * .34){
+        preference = ['right','bottom','top','left'];
+      }else if(source.centerX > wrapRect.width * .66){
+        preference = ['left','bottom','top','right'];
+      }else if(source.centerY < wrapRect.height * .5){
+        preference = ['bottom','right','left','top'];
+      }else{
+        preference = ['top','right','left','bottom'];
+      }
+
+      const maxX = Math.max(margin, wrapRect.width - bubbleWidth - margin);
+      const maxY = Math.max(margin, wrapRect.height - bubbleHeight - margin);
+      const evaluated = preference.map((placement, preferenceIndex) => {
+        const raw = candidates[placement];
+        const x = Math.min(maxX, Math.max(margin, raw.x));
+        const y = Math.min(maxY, Math.max(margin, raw.y));
+        const overflow =
+          Math.max(0, margin - raw.x) +
+          Math.max(0, raw.x + bubbleWidth + margin - wrapRect.width) +
+          Math.max(0, margin - raw.y) +
+          Math.max(0, raw.y + bubbleHeight + margin - wrapRect.height);
+        const overlapWidth = Math.max(0, Math.min(x + bubbleWidth, source.right) - Math.max(x, source.left));
+        const overlapHeight = Math.max(0, Math.min(y + bubbleHeight, source.bottom) - Math.max(y, source.top));
+        const overlapArea = overlapWidth * overlapHeight;
+
+        return {
+          placement,
+          x,
+          y,
+          score:overlapArea * 100 + overflow * 12 + preferenceIndex * 40
+        };
+      });
+
+      const best = evaluated.sort((a,b) => a.score - b.score)[0];
+      const anchorX = Math.min(bubbleWidth - 28, Math.max(28, source.centerX - best.x));
+      const anchorY = Math.min(bubbleHeight - 28, Math.max(28, source.centerY - best.y));
+
+      bubble.dataset.placement = best.placement;
+      bubble.style.left = `${best.x}px`;
+      bubble.style.top = `${best.y}px`;
+      bubble.style.setProperty('--anchor-x', `${anchorX}px`);
+      bubble.style.setProperty('--anchor-y', `${anchorY}px`);
+    }
+
+    function closeBubble(targetInstance = null){
+      canvasInstances.forEach(instance => {
+        if(targetInstance && instance !== targetInstance) return;
+        instance.bubble.classList.remove('show');
+        instance.canvas.classList.remove('dim');
+        instance.canvas.querySelectorAll('.tile').forEach(tile => tile.classList.remove('active-tile'));
+        instance.activeTile = null;
+      });
+    }
+
+    document.querySelectorAll('.canvas-wrap[data-canvas-type]').forEach(canvasWrap => {
+      const canvas = canvasWrap.querySelector('.canvas');
+      const bubble = canvasWrap.querySelector('.bubble');
+      const icon = bubble?.querySelector('.bubble-icon');
+      const title = bubble?.querySelector('h3');
+      const text = bubble?.querySelector('p');
+      const list = bubble?.querySelector('ul');
+      const close = bubble?.querySelector('.close');
+      const canvasData = canvasDataByType[canvasWrap.dataset.canvasType];
+      if(!canvas || !bubble || !canvasData) return;
+
+      const instance = {canvasWrap,canvas,bubble,activeTile:null};
+      canvasInstances.push(instance);
+
+      canvas.querySelectorAll('.tile').forEach(tile => {
+        tile.addEventListener('click', () => {
+          const item = canvasData[tile.dataset.key];
+          if(!item) return;
+
+          closeBubble();
+          tile.classList.add('active-tile');
+          canvas.classList.add('dim');
+          icon.textContent = item.icon;
+          title.textContent = item.title;
+          text.textContent = item.text;
+          list.innerHTML = item.list.map(entry => `<li>${entry}</li>`).join('');
+
+          instance.activeTile = tile;
+          positionBubble(bubble, canvasWrap, tile);
+          bubble.classList.add('show');
+        });
+      });
+
+      close?.addEventListener('click', () => closeBubble(instance));
+    });
+
+    window.addEventListener('resize', () => {
+      canvasInstances.forEach(instance => {
+        if(instance.activeTile && instance.bubble.classList.contains('show')){
+          positionBubble(instance.bubble, instance.canvasWrap, instance.activeTile);
+        }
+      });
+    });
+
+    const nodePositions = {
+      value:{x:50,y:48},
+      segments:{x:82,y:20},
+      relationships:{x:84,y:48},
+      channels:{x:72,y:68},
+      revenue:{x:50,y:74},
+      costs:{x:28,y:68},
+      partners:{x:16,y:48},
+      activities:{x:18,y:20},
+      resources:{x:50,y:13}
+    };
+
+    const dependencyData = {
+      value:{
+        title:'Komplettlösung als Zentrum',
+        text:'Umweltplanung, Artenschutz, GIS, Genehmigungsmanagement und Koordination werden zu einem belastbaren Projektpfad gebündelt. Das verbindet nahezu alle Canvas-Bausteine.',
+        aspects:['weniger Schnittstellen','Rechtssicherheit','Koordination','Erfahrungswissen'],
+        direct:[
+          {from:'segments', to:'value', aspect:'Bedarf'},
+          {from:'value', to:'segments', aspect:'Nutzen'},
+          {from:'resources', to:'value', aspect:'Datenbasis'},
+          {from:'value', to:'activities', aspect:'Anforderung'},
+          {from:'value', to:'relationships', aspect:'Erklärbedarf'},
+          {from:'value', to:'revenue', aspect:'Zusatzleistung'}
+        ],
+        secondary:[
+          {from:'activities', to:'costs', aspect:'Aufwand'},
+          {from:'resources', to:'costs', aspect:'Schulung'},
+          {from:'relationships', to:'channels', aspect:'Kommunikation'}
+        ]
+      },
+      segments:{
+        title:'Komplexe Vorhabenträger priorisieren',
+        text:'Kommunen, Behörden, EE-Entwickler und Netzakteure benötigen belastbare Genehmigungs- und Umweltpfade. Ihre Anforderungen bestimmen Leistungstiefe, Kanäle und Ressourcen.',
+        aspects:['EE/BESS','öffentliche Hand','Genehmigung','Projektgröße'],
+        direct:[
+          {from:'segments', to:'value', aspect:'Bedarf'},
+          {from:'value', to:'segments', aspect:'Nutzen'},
+          {from:'segments', to:'channels', aspect:'Kanalwahl'},
+          {from:'channels', to:'segments', aspect:'Reichweite'},
+          {from:'segments', to:'relationships', aspect:'Betreuung'},
+          {from:'segments', to:'revenue', aspect:'Zahlungsbereitschaft'}
+        ],
+        secondary:[
+          {from:'relationships', to:'value', aspect:'Feedback'},
+          {from:'channels', to:'costs', aspect:'Akquise'}
+        ]
+      },
+      relationships:{
+        title:'Vertrauen trägt komplexe Verfahren',
+        text:'Feste Ansprechpartner und transparente Projektkommunikation reduzieren Unsicherheit. Gleichzeitig erzeugen sie Abstimmungs- und Koordinationsaufwand.',
+        aspects:['Ansprechpartner','Verlässlichkeit','Abstimmung','Folgeauftrag'],
+        direct:[
+          {from:'segments', to:'relationships', aspect:'Erwartung'},
+          {from:'relationships', to:'segments', aspect:'Bindung'},
+          {from:'channels', to:'relationships', aspect:'Kontakt'},
+          {from:'relationships', to:'activities', aspect:'Abstimmung'},
+          {from:'relationships', to:'value', aspect:'Vertrauen'},
+          {from:'relationships', to:'revenue', aspect:'Folgeauftrag'}
+        ],
+        secondary:[
+          {from:'activities', to:'costs', aspect:'Zeitaufwand'},
+          {from:'value', to:'channels', aspect:'Darstellung'}
+        ]
+      },
+      channels:{
+        title:'Vergaben und Referenzen öffnen den Markt',
+        text:'Website, Netzwerke und öffentliche Verfahren verbinden Enviro-Plan mit passenden Projekten. Die Vergabefilterung soll Trefferqualität statt bloßer Reichweite erhöhen.',
+        aspects:['Vergabeportale','Referenzen','Netzwerk','Trefferqualität'],
+        direct:[
+          {from:'segments', to:'channels', aspect:'Kanalwahl'},
+          {from:'value', to:'channels', aspect:'Inhalte'},
+          {from:'channels', to:'segments', aspect:'Reichweite'},
+          {from:'channels', to:'relationships', aspect:'Kontakt'},
+          {from:'channels', to:'costs', aspect:'Akquise'}
+        ],
+        secondary:[
+          {from:'relationships', to:'revenue', aspect:'Bindung'},
+          {from:'channels', to:'value', aspect:'Rückmeldung'}
+        ]
+      },
+      revenue:{
+        title:'Honorare bleiben der wirtschaftliche Kern',
+        text:'Projektbezogene Honorare tragen das Modell. Quick-Checks, Monitoring, WebGIS-/Datenpflege und Kompensationsmanagement können die Erlösbasis ergänzen.',
+        aspects:['Projekthonorar','Quick-Check','Monitoring','Datenpflege'],
+        direct:[
+          {from:'value', to:'revenue', aspect:'Zahlungsgrund'},
+          {from:'segments', to:'revenue', aspect:'Zahlungsbereitschaft'},
+          {from:'costs', to:'revenue', aspect:'Preisgrenze'},
+          {from:'revenue', to:'costs', aspect:'Kostenspielraum'},
+          {from:'revenue', to:'resources', aspect:'Investition'},
+          {from:'revenue', to:'value', aspect:'Priorisierung'}
+        ],
+        secondary:[
+          {from:'resources', to:'activities', aspect:'Kompetenz'},
+          {from:'value', to:'segments', aspect:'Nutzen'}
+        ]
+      },
+      costs:{
+        title:'Fachzeit bestimmt die Kostenlogik',
+        text:'Personal, Feldarbeit und Projektkoordination dominieren. Neue Daten- und KI-Strukturen verursachen zunächst Investition und Pflege, sollen aber Such- und Doppelarbeit reduzieren.',
+        aspects:['Fachzeit','Feldarbeit','IT/GIS','Qualität'],
+        direct:[
+          {from:'resources', to:'costs', aspect:'Software/Daten'},
+          {from:'activities', to:'costs', aspect:'Arbeitszeit'},
+          {from:'partners', to:'costs', aspect:'Fremdleistung'},
+          {from:'costs', to:'revenue', aspect:'Marge'},
+          {from:'costs', to:'value', aspect:'Leistungsgrenze'}
+        ],
+        secondary:[
+          {from:'value', to:'segments', aspect:'Nutzen'},
+          {from:'costs', to:'resources', aspect:'Priorisierung'}
+        ]
+      },
+      partners:{
+        title:'Partner ergänzen Spezialwissen',
+        text:'Spezialbüros, Fachgutachter und Arbeitsgemeinschaften erweitern die Leistungstiefe oder federn Spitzen ab. Die Schnittstellen müssen aktiv koordiniert werden.',
+        aspects:['Spezialwissen','Argen','Spitzenlast','Koordination'],
+        direct:[
+          {from:'partners', to:'resources', aspect:'Know-how'},
+          {from:'partners', to:'activities', aspect:'Zuarbeit'},
+          {from:'partners', to:'value', aspect:'Leistungstiefe'},
+          {from:'partners', to:'costs', aspect:'Fremdleistung'},
+          {from:'activities', to:'partners', aspect:'Koordination'}
+        ],
+        secondary:[
+          {from:'resources', to:'value', aspect:'Datenbasis'},
+          {from:'value', to:'revenue', aspect:'Zusatzleistung'}
+        ]
+      },
+      activities:{
+        title:'Facharbeit und Koordination erzeugen Wert',
+        text:'Raumanalyse, Artenschutz, GIS, Genehmigungsplanung, UBB und Projektsteuerung greifen ineinander. Standardisiert werden können Vorbereitung und Übergaben – nicht das Fachurteil.',
+        aspects:['Analyse','Genehmigung','GIS','Qualitätssicherung'],
+        direct:[
+          {from:'resources', to:'activities', aspect:'Werkzeuge'},
+          {from:'partners', to:'activities', aspect:'Zuarbeit'},
+          {from:'activities', to:'value', aspect:'Ergebnis'},
+          {from:'activities', to:'costs', aspect:'Aufwand'},
+          {from:'activities', to:'relationships', aspect:'Abstimmung'}
+        ],
+        secondary:[
+          {from:'value', to:'revenue', aspect:'Zusatzleistung'},
+          {from:'costs', to:'revenue', aspect:'Marge'}
+        ]
+      },
+      resources:{
+        title:'Menschen, Daten und Referenzen skalieren gemeinsam',
+        text:'Fachpersonal bleibt die zentrale Ressource. Strukturierte Referenzen, GIS-Daten und auffindbares Wissen erhöhen jedoch die Wirkung jeder verfügbaren Fachstunde.',
+        aspects:['Fachpersonal','Referenzen','GIS-Daten','Wissenszugang'],
+        direct:[
+          {from:'partners', to:'resources', aspect:'Know-how'},
+          {from:'resources', to:'activities', aspect:'Werkzeuge'},
+          {from:'resources', to:'value', aspect:'Leistungsfähigkeit'},
+          {from:'resources', to:'costs', aspect:'Investition'},
+          {from:'resources', to:'revenue', aspect:'Spezialleistung'}
+        ],
+        secondary:[
+          {from:'activities', to:'value', aspect:'Ergebnis'},
+          {from:'costs', to:'revenue', aspect:'Marge'}
+        ]
+      }
+    };
+
+    const linkLayer = document.getElementById('linkLayer');
+    const dependencyMap = document.getElementById('dependencyMap');
+    const networkTitle = document.getElementById('networkTitle');
+    const networkText = document.getElementById('networkText');
+    const networkAspects = document.getElementById('networkAspects');
+    let activeNetworkKey = 'value';
+    let draggedNode = null;
+    let dragMoved = false;
+
+    function renderDependencyNetwork(activeKey = 'value'){
+      if(!linkLayer || !dependencyMap) return;
+      activeNetworkKey = activeKey;
+      const item = dependencyData[activeKey];
+      const directLinks = item.direct || [];
+      const secondaryLinks = item.secondary || [];
+      const directNodes = new Set(directLinks.flatMap(link => [link.from, link.to]));
+      const secondaryNodes = new Set(secondaryLinks.flatMap(link => [link.from, link.to]));
+
+      linkLayer.innerHTML = '';
+      dependencyMap.querySelectorAll('.stream-tag').forEach(tag => tag.remove());
+      document.querySelectorAll('.node-bubble').forEach(node => {
+        const key = node.dataset.node;
+        node.classList.toggle('active-node', key === activeKey);
+        node.classList.toggle('related-node', key !== activeKey && directNodes.has(key));
+        node.classList.toggle('secondary-node', key !== activeKey && !directNodes.has(key) && secondaryNodes.has(key));
+      });
+
+      networkTitle.textContent = item.title;
+      networkText.textContent = item.text;
+      networkAspects.innerHTML = item.aspects.map(aspect => `<span class="aspect-chip">${aspect}</span>`).join('');
+
+      function renderEdge(link, i, secondary = false){
+        const sourcePosition = nodePositions[link.from];
+        const targetPosition = nodePositions[link.to];
+        const dx = targetPosition.x - sourcePosition.x;
+        const dy = targetPosition.y - sourcePosition.y;
+        const length = Math.hypot(dx, dy) || 1;
+        const startPad = secondary ? 4.2 : 5.2;
+        const endPad = secondary ? 5.8 : 7.2;
+        const x1 = sourcePosition.x + (dx / length) * startPad;
+        const y1 = sourcePosition.y + (dy / length) * startPad;
+        const x2 = targetPosition.x - (dx / length) * endPad;
+        const y2 = targetPosition.y - (dy / length) * endPad;
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('class', `link-line ${secondary ? 'secondary-link' : 'active-link'}`);
+        line.style.animationDelay = `${i * (secondary ? -.32 : -.18)}s`;
+        linkLayer.appendChild(line);
+
+        const arrowSize = secondary ? .75 : 1.05;
+        const arrowSpread = secondary ? .42 : .58;
+        const ux = dx / length;
+        const uy = dy / length;
+        const px = -uy;
+        const py = ux;
+        const baseX = x2 - ux * arrowSize;
+        const baseY = y2 - uy * arrowSize;
+        const arrow = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+        arrow.setAttribute('points', [
+          `${x2},${y2}`,
+          `${baseX + px * arrowSpread},${baseY + py * arrowSpread}`,
+          `${baseX - px * arrowSpread},${baseY - py * arrowSpread}`
+        ].join(' '));
+        arrow.setAttribute('class', `edge-arrow${secondary ? ' secondary-arrow' : ''}`);
+        linkLayer.appendChild(arrow);
+
+        const tag = document.createElement('span');
+        tag.className = `stream-tag active-stream${secondary ? ' secondary-stream' : ''}`;
+        tag.textContent = link.aspect;
+        tag.style.setProperty('--sx', `${sourcePosition.x}%`);
+        tag.style.setProperty('--sy', `${sourcePosition.y}%`);
+        tag.style.setProperty('--tx', `${targetPosition.x}%`);
+        tag.style.setProperty('--ty', `${targetPosition.y}%`);
+        tag.style.setProperty('--tag-delay', `${secondary ? .5 + i * .55 : i * .22}s`);
+        dependencyMap.appendChild(tag);
+      }
+
+      secondaryLinks.forEach((link, i) => renderEdge(link, i, true));
+      directLinks.forEach((link, i) => renderEdge(link, i));
+    }
+
+    document.querySelectorAll('.node-bubble').forEach(node => {
+      node.addEventListener('pointerdown', event => {
+        draggedNode = node;
+        dragMoved = false;
+        node.classList.add('dragging-node');
+        node.setPointerCapture(event.pointerId);
+      });
+
+      node.addEventListener('pointermove', event => {
+        if(draggedNode !== node) return;
+        const rect = dependencyMap.getBoundingClientRect();
+        const x = Math.max(7, Math.min(93, ((event.clientX - rect.left) / rect.width) * 100));
+        const y = Math.max(8, Math.min(72, ((event.clientY - rect.top) / rect.height) * 100));
+
+        dragMoved = true;
+        nodePositions[node.dataset.node] = {x,y};
+        node.style.setProperty('--x', `${x}%`);
+        node.style.setProperty('--y', `${y}%`);
+        renderDependencyNetwork(activeNetworkKey);
+        node.classList.add('dragging-node');
+      });
+
+      node.addEventListener('pointerup', event => {
+        node.releasePointerCapture(event.pointerId);
+        node.classList.remove('dragging-node');
+        draggedNode = null;
+      });
+
+      node.addEventListener('click', event => {
+        if(dragMoved){
+          event.preventDefault();
+          dragMoved = false;
+          return;
+        }
+        renderDependencyNetwork(node.dataset.node);
+      });
+    });
+
+    renderDependencyNetwork();
+
+    const disruptionData = [
+      {
+        icon:'⚡',
+        title:'EE/BESS/Netz ausbauen',
+        text:'Vorhandene Referenzen und Fachkompetenzen werden für wachsende Speicher-, Trassen- und Netzinfrastrukturprojekte fokussiert vermarktet.',
+        outputTitle:'Canvas-Wirkung',
+        outputText:'Kundensegmente und Wertangebot werden marktschärfer; Aktivitäten und Ressourcen werden auf komplexe EE-/BESS-/Netzverfahren gebündelt.',
+        active:['value','activities','resources'],
+        list:[
+          'Projektentwickler, Netzbetreiber, Kommunen und Behörden priorisieren.',
+          'Umwelt, Artenschutz, GIS, Trasse und Genehmigung als Paket anbieten.'
+        ]
+      },
+      {
+        icon:'🎯',
+        title:'Vergaben gezielter auswählen',
+        text:'Ein Assistenzsystem filtert Verfahren nach fachlicher Passung, Eignung, Referenzen und benötigten Ressorts.',
+        outputTitle:'Akquise wird datenbasiert',
+        outputText:'Vor allem Kanäle, Aktivitäten, Ressourcen und Kosten verändern sich: weniger Suchaufwand, bessere Go-/No-Go-Grundlagen und gezieltere Referenznutzung.',
+        active:['activities','resources','relationships','costs'],
+        list:[
+          'Vergabeportale systematisch nach Enviro-Plan-Passung durchsuchen.',
+          'Passende Referenzen, Fachressorts und Ausschlussgründe sichtbar machen.'
+        ]
+      },
+      {
+        icon:'📈',
+        title:'Interne Kapazität erhöhen',
+        text:'Referenzdaten, Berichtsvorlagen, GIS-Workflows und Wissenszugang entlasten wiederkehrende Arbeitsschritte.',
+        outputTitle:'Mehr Wirkung pro Fachkraft',
+        outputText:'Aktivitäten, Ressourcen, Kosten und Wertangebot profitieren – sofern Datenpflege, Schulung und fachliche Freigabe verbindlich organisiert sind.',
+        active:['activities','resources','relationships','costs','value','revenue'],
+        list:[
+          'Kartierdaten, GIS und Berichtsvorbereitung gezielt beschleunigen.',
+          'Standardisierung auf Vorbereitung und Koordination begrenzen.'
+        ]
+      }
+    ];
+
+    const disruptionRange = document.getElementById('disruptionRange');
+    const disruptionFill = document.getElementById('disruptionFill');
+    const disruptionIcon = document.getElementById('disruptionIcon');
+    const disruptionTitle = document.getElementById('disruptionTitle');
+    const disruptionText = document.getElementById('disruptionText');
+    const disruptionOutputTitle = document.getElementById('disruptionOutputTitle');
+    const disruptionOutputText = document.getElementById('disruptionOutputText');
+    const disruptionList = document.getElementById('disruptionList');
+
+    function renderDisruption(value = 0){
+      if(!disruptionRange) return;
+      const item = disruptionData[Number(value)];
+      disruptionFill.style.width = `${33 + Number(value) * 33.5}%`;
+      disruptionIcon.textContent = item.icon;
+      disruptionTitle.textContent = item.title;
+      disruptionText.textContent = item.text;
+      disruptionOutputTitle.textContent = item.outputTitle;
+      disruptionOutputText.textContent = item.outputText;
+      disruptionList.innerHTML = item.list.map(x => `<li>${x}</li>`).join('');
+      document.querySelectorAll('.impact-node').forEach(node => {
+        node.classList.toggle('active-impact', item.active.includes(node.dataset.impactNode));
+      });
+    }
+
+    disruptionRange?.addEventListener('input', event => renderDisruption(event.target.value));
+    renderDisruption();
+
+    update();
+  </script>
+</body>
+</html>

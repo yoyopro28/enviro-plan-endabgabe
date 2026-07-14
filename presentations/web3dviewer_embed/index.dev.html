@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mobile 3D FPS Viewer</title>
+
+  <style>
+    html, body { margin: 0; padding: 0; width:100vw; height:100vh; overflow: hidden; }
+    body { background: #1d1d1d; }
+    canvas { display: block; touch-action: none; }
+
+    #loadingSpinner {
+      position:fixed; left:50%; top:50%; transform:translate(-50%,-50%);
+      background:rgba(30,30,30,0.85); color:#3fcf8e;
+      font-family:sans-serif; font-size:1.1em; padding:1.5em 3em; border-radius:18px;
+      z-index:150;
+    }
+
+    #menu { 
+      position: absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      background:rgba(30,30,30,0.98); color:#fff; padding:2em 3vw; border-radius:18px; text-align:center;
+      font-family:sans-serif; box-shadow: 0 16px 64px rgba(0,0,0,0.35);
+      z-index:100; min-width:230px; max-width:96vw; display:none;
+    }
+    #menu label { display:block; margin-bottom:0.7em; font-size:1.08em; }
+    #menu input[type="range"] { width:90vw; }
+    #menu .slider-tip { color:#aaa; font-size:0.95em; margin-bottom:0.6em; }
+    #menu input[type="checkbox"] { transform: scale(1.2); margin-right:0.5em; }
+    #menu button {
+      background:#3fcf8e; color:#222; border:none; padding:0.7em 2em; border-radius:11px;
+      font-size:1em; margin-top:1.2em;
+    }
+    #menu button:last-child { background:#222; color:#3fcf8e; margin-left:1em;}
+
+    #mobileControls { pointer-events:none; }
+    #mobileControls * { pointer-events:auto; user-select:none; -webkit-user-select:none; }
+
+    @media (max-width:600px) {
+      #menu { padding:1em 2vw; }
+      #menu label { font-size:1em; }
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/nipplejs@0.9.0/dist/nipplejs.min.js"></script>
+</head>
+
+<body>
+  <div id="loadingSpinner">Lade Modell ...</div>
+
+  <div id="menu">
+    <label for="speedSlider">Bewegungsgeschwindigkeit: <span id="speedValue">30</span></label>
+    <input type="range" min="0" max="30" step="0.1" id="speedSlider" value="20">
+    <div class="slider-tip">(Sprint: <span id="sprintValue">40</span>)</div>
+
+    <label for="scaleSlider" style="margin-top:1.4em;">Modell-Scale: <span id="scaleValue">0.02</span></label>
+    <input type="range" min="0.001" max="0.08" step="0.0001" id="scaleSlider" value="0.02">
+    <div class="slider-tip"></div>
+
+    <label for="fovSlider" style="margin-top:1.4em;">Sichtfeld / FOV: <span id="fovValue">75</span>°</label>
+    <input type="range" min="35" max="110" step="1" id="fovSlider" value="75">
+    <div class="slider-tip">Kleiner = Zoom, größer = Weitwinkel</div>
+
+<div style="margin-top:1.4em; display:flex; gap:14px; justify-content:center; align-items:center; flex-wrap:wrap;">
+  <label style="display:flex; align-items:center; gap:8px; margin:0;">
+    <input type="checkbox" id="flyToggle">
+    <span>Flugmodus</span>
+  </label>
+
+  <label style="display:flex; align-items:center; gap:8px; margin:0;">
+    <input type="checkbox" id="sunToggle" checked>
+    <span>Sonne + Schatten</span>
+  </label>
+</div>
+
+
+    <button id="toggleExplode">Schichten aufklappen</button>
+
+    <button id="resetPosition">Zurück zum Start</button>
+    <button id="closeMenu">Schließen</button>
+  </div>
+
+  <div id="mobileControls" style="display:none;">
+    <div id="joystickZone" style="position:fixed; left:10px; bottom:10px; width:110px; height:110px; z-index:50;"></div>
+    <div style="position:fixed; right: calc(12px + env(safe-area-inset-right)); bottom: calc(12px + env(safe-area-inset-bottom)); z-index:50; display:flex; flex-direction:column; gap:12px;">
+      <button id="btnMenu" style="width:48px;height:48px;border-radius:50%;background:#222;color:#3fcf8e;font-size:1.08em;">≡</button>
+      <button id="btnExplode" style="width:48px;height:48px;border-radius:50%;background:#222;color:#3fcf8e;font-size:0.95em;">⤢</button>
+      <button id="btnLayers" style="width:48px;height:48px;border-radius:50%;background:#222;color:#3fcf8e;font-size:0.72em;">LAY</button>
+      <button id="btnUp" style="width:48px;height:48px;border-radius:50%;background:#3fcf8e;color:#222;font-size:1.3em;">↑</button>
+      <button id="btnDown" style="width:48px;height:48px;border-radius:50%;background:#3fcf8e;color:#222;font-size:1.3em;">↓</button>
+    </div>
+  </div>
+
+  <!-- Mobile Layer Panel -->
+  <div id="layerPanel" style="
+    position:fixed; right:12px; top: calc(12px + env(safe-area-inset-top)); z-index:60;
+    background:rgba(20,20,20,0.92); color:#fff;
+    padding:12px; border-radius:14px; font-family:sans-serif;
+    width:min(260px, 82vw);
+    display:none;
+    box-shadow:0 16px 64px rgba(0,0,0,0.35);
+  ">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+      <div style="font-weight:700;">Layer</div>
+      <button id="btnCloseLayerPanel" style="
+        background:#222; color:#3fcf8e; border:none; border-radius:10px;
+        padding:6px 10px; font-size:0.95em;
+      ">✕</button>
+    </div>
+
+    <div style="display:flex; gap:10px; margin:10px 0 8px;">
+      <button id="btnLayersAllOn" style="
+        flex:1; background:#3fcf8e; color:#222; border:none;
+        border-radius:10px; padding:8px; font-size:0.95em;
+      ">Alle an</button>
+      <button id="btnLayersAllOff" style="
+        flex:1; background:#222; color:#3fcf8e; border:1px solid #3fcf8e;
+        border-radius:10px; padding:8px; font-size:0.95em;
+      ">Alle aus</button>
+    </div>
+
+    <div id="layerList" style="max-height:44vh; overflow:auto; padding-right:6px;"></div>
+  </div>
+
+  <script type="module">
+    import * as THREE from 'https://esm.sh/three@0.160.0';
+    import { GLTFLoader } from 'https://esm.sh/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+
+    const MODEL_URL = './model.glb';
+
+    const LAYER_LABELS = {
+      "L_01": "Boden",
+      "L_02": "Leitungen",
+      "L_03": "Boden2",
+      "L_04": "Einfassungen",
+      "L_05": "Cortenstahl",
+      "L_06": "Hortisole",
+      "L_07": "SandLounge",
+      "L_08": "GräserBeete",
+      "L_09": "StaudenBeete",
+      "L_10": "Rasenfläche",
+      "L_11": "Pflasterflächen",
+      "L_12": "Wasserbecken",
+      "L_13": "Wegedecke",
+      "L_14": "Teakholzdeck",
+      "L_15": "Hecke",
+      "L_16": "Zaun",
+      "L_17": "Haus"
+    };
+
+    let camera, scene, renderer;
+    let model, groundMeshes = [];
+    let modelScale = 0.02;
+    let cameraFov = 75;
+
+    let speed = { base:5, sprint: 10 };
+    let velocityY = 0;
+    let flying = true;
+    let paused = false;
+    let onGround = false;
+    let yaw = 0, pitch = 0;
+    let cameraHolder, cameraPitch;
+    let sprinting = false;
+
+    let groundLevel = 1.6, gravity = -22;
+    let startPosition = new THREE.Vector3(0, groundLevel, 5);
+    const clock = new THREE.Clock();
+
+    // Analog Joystick Input
+    let joystickInput = { x: 0, y: 0, force: 0 };
+    let verticalInput = 0;
+
+    // Explode / Layer animation
+    let layers = []; // [{ obj, restPos, basePos, targetPos }]
+    let exploded = false;
+    let explodeAnim = { active:false, t:0, duration:0.6 };
+    let explodeGap = 120;
+
+    // Layer visibility state
+    let layerVisibility = new Map(); // name -> boolean
+
+    // --- Sun / Shadows (NEW) ---
+    let sunEnabled = true;
+    let sunTime = 0.82;      // start near sunset vibe
+    let sunSpeed = 0.012;    // slow-ish
+    let sunLight = null;
+    let hemiLight = null;
+
+    // UI Elements
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const menu = document.getElementById('menu');
+
+    const speedSlider = document.getElementById('speedSlider');
+    const speedValue = document.getElementById('speedValue');
+    const sprintValue = document.getElementById('sprintValue');
+
+    const scaleSlider = document.getElementById('scaleSlider');
+    const scaleValue = document.getElementById('scaleValue');
+    const fovSlider = document.getElementById('fovSlider');
+    const fovValue = document.getElementById('fovValue');
+
+    const resetBtn = document.getElementById('resetPosition');
+    const closeMenuBtn = document.getElementById('closeMenu');
+    const flyToggle = document.getElementById('flyToggle');
+    const sunToggle = document.getElementById('sunToggle');
+
+    const toggleExplodeBtn = document.getElementById('toggleExplode');
+
+    const mobileControls = document.getElementById('mobileControls');
+    const btnUp = document.getElementById('btnUp');
+    const btnDown = document.getElementById('btnDown');
+    const btnMenu = document.getElementById('btnMenu');
+    const btnExplode = document.getElementById('btnExplode');
+    const btnLayers = document.getElementById('btnLayers');
+
+    // Mobile layer panel elements
+    const layerPanel = document.getElementById('layerPanel');
+    const layerList = document.getElementById('layerList');
+    const btnCloseLayerPanel = document.getElementById('btnCloseLayerPanel');
+    const btnLayersAllOn = document.getElementById('btnLayersAllOn');
+    const btnLayersAllOff = document.getElementById('btnLayersAllOff');
+
+    // Touch‐Look State
+    let cameraTouchActive = false;
+    let cameraTouchId = null;
+    let lastTouchX = 0, lastTouchY = 0;
+    const touchLookFactor = 0.0070;
+
+    // Sprint per Shift-Taste
+    window.addEventListener('keydown', e => { if (e.key === 'Shift') sprinting = true; });
+    window.addEventListener('keyup',   e => { if (e.key === 'Shift') sprinting = false; });
+
+    // Fly-Mode Toggle
+    flyToggle.addEventListener('change', e => { flying = e.target.checked; });
+
+    // Sun toggle (NEW)
+    sunToggle.addEventListener('change', e => {
+      sunEnabled = e.target.checked;
+      applySunEnabled();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      flying = true;
+      flyToggle.checked = true;
+
+      sunEnabled = !!sunToggle.checked;
+
+      loadingSpinner.style.display = 'block';
+      startAppWithModel(MODEL_URL);
+    });
+
+    function getLayerLabel(objName, fallbackIndex) {
+      if (objName && LAYER_LABELS[objName]) return LAYER_LABELS[objName];
+      return objName || `Layer ${fallbackIndex + 1}`;
+    }
+
+    function updateSpeedUI() {
+      speedValue.textContent = speed.base.toFixed(1);
+      sprintValue.textContent = speed.sprint.toFixed(1);
+    }
+    function updateScaleUI() { scaleValue.textContent = modelScale.toFixed(2); }
+    function updateFovUI() { fovValue.textContent = Math.round(cameraFov); }
+
+    speedSlider.oninput = () => {
+      speed.base = parseFloat(speedSlider.value);
+      speed.sprint = speed.base * 2;
+      updateSpeedUI();
+    };
+    scaleSlider.oninput = () => scaleModel(parseFloat(scaleSlider.value));
+    fovSlider.oninput = () => setCameraFov(parseFloat(fovSlider.value));
+
+    resetBtn.onclick = () => resetPosition();
+    closeMenuBtn.onclick = () => menu.style.display = 'none';
+
+    toggleExplodeBtn.onclick = () => toggleExplode();
+    if (btnExplode) {
+      btnExplode.addEventListener('touchend', e => {
+        e.preventDefault();
+        toggleExplode();
+      }, { passive:false });
+    }
+
+    function scaleModel(newScale) {
+      if (!model) return;
+      model.scale.set(newScale, newScale, newScale);
+      modelScale = newScale;
+      scaleSlider.value = modelScale.toFixed(3);
+      updateScaleUI();
+    }
+
+    function setCameraFov(newFov) {
+      cameraFov = THREE.MathUtils.clamp(newFov, 35, 110);
+      fovSlider.value = cameraFov.toFixed(0);
+      updateFovUI();
+      if (!camera) return;
+      camera.fov = cameraFov;
+      camera.updateProjectionMatrix();
+    }
+
+    function resetPosition() {
+      cameraHolder.position.copy(startPosition);
+      velocityY = 0;
+    }
+
+    // ---- Layer Visibility helpers ----
+    function applyLayerVisibility() {
+      if (!layers.length) return;
+      for (const L of layers) {
+        const key = L.obj.name;
+        const isVisible = layerVisibility.has(key) ? layerVisibility.get(key) : true;
+        L.obj.visible = isVisible;
+      }
+    }
+
+function setAllLayersVisible(visible) {
+  if (!layers.length) return;
+  for (const L of layers) layerVisibility.set(L.obj.name, !!visible);
+  applyLayerVisibility();
+
+  if (exploded) {
+    for (const L of layers) L.basePos = L.obj.position.clone();
+    explodeAnim.active = true;
+    explodeAnim.t = 0;
+    setExplodeTargets(true);
+  }
+
+  renderLayerList();
+}
+
+
+    function renderLayerList() {
+      if (!layerList) return;
+
+      if (!layers.length) {
+        layerList.innerHTML = `<div style="color:#aaa; padding:10px 0;">Keine Layer gefunden.</div>`;
+        return;
+      }
+
+      const rows = layers
+        .slice()
+        .reverse()
+        .map((L, revIdx) => {
+          const originalIdx = layers.length - 1 - revIdx;
+
+          const objName = L.obj.name || `Layer_${originalIdx + 1}`;
+          const label = getLayerLabel(L.obj.name, originalIdx);
+          const checked = layerVisibility.has(objName) ? layerVisibility.get(objName) : true;
+
+          return `
+            <label style="
+              display:flex; align-items:center; gap:10px;
+              padding:8px 2px; border-bottom:1px solid rgba(255,255,255,0.08);
+            ">
+              <input type="checkbox" data-layer="${objName}" ${checked ? 'checked' : ''} style="transform:scale(1.25)">
+              <span style="font-size:0.98em;">${label}</span>
+            </label>
+          `;
+        })
+        .join('');
+
+      layerList.innerHTML = rows;
+
+      layerList.querySelectorAll('input[type="checkbox"][data-layer]').forEach(cb => {
+        cb.addEventListener(
+          'change',
+          (e) => {
+            const name = e.target.getAttribute('data-layer');
+layerVisibility.set(name, e.target.checked);
+applyLayerVisibility();
+
+if (exploded) {
+  // neue Abstände ohne "Lücken" berechnen + smooth animieren
+  for (const L of layers) L.basePos = L.obj.position.clone();
+  explodeAnim.active = true;
+  explodeAnim.t = 0;
+  setExplodeTargets(true);
+}
+
+            applyLayerVisibility();
+          },
+          { passive: true }
+        );
+      });
+    }
+
+    function openLayerPanel() {
+      if (!model) return;
+      layerPanel.style.display = 'block';
+      renderLayerList();
+    }
+
+    function closeLayerPanel() {
+      layerPanel.style.display = 'none';
+    }
+
+    // prevent layer panel touch from controlling camera
+    ['touchstart','touchmove','touchend'].forEach(evtName => {
+      layerPanel.addEventListener(evtName, (e) => {
+        e.stopPropagation();
+      }, { passive:false });
+    });
+
+    // ---- Sun / Shadows helpers (NEW) ----
+    function applySunEnabled() {
+      if (!renderer) return;
+
+      if (sunLight) sunLight.visible = !!sunEnabled;
+      if (hemiLight) hemiLight.intensity = sunEnabled ? 0.55 : 0.95;
+
+      // disable shadow rendering when sun is off (saves GPU)
+      renderer.shadowMap.enabled = !!sunEnabled;
+    }
+
+    function updateSun(delta) {
+      if (!sunEnabled || !sunLight || !scene) return;
+
+      sunTime += sunSpeed * delta;
+      if (sunTime > 1) sunTime -= 1;
+
+      const azimuth = sunTime * Math.PI * 2;
+      const elevation = 0.18 + 0.10 * Math.sin(azimuth); // low, sunset-ish
+
+      const R = 700;
+      const y = Math.sin(elevation) * R + 120;
+      const x = Math.cos(azimuth) * R;
+      const z = Math.sin(azimuth) * R;
+
+      sunLight.position.set(x, y, z);
+
+      sunLight.target.position.set(0, 0, 0);
+      scene.add(sunLight.target);
+
+      const heightFactor = THREE.MathUtils.clamp((y - 120) / R, 0, 1);
+
+      sunLight.intensity = 1.1 + 0.5 * (1 - heightFactor);
+
+      const sunset = new THREE.Color(0xff9a4d);
+      const warmDay = new THREE.Color(0xffd1a3);
+      sunLight.color.copy(sunset).lerp(warmDay, heightFactor);
+    }
+    // -------------------------------
+
+    // ---- Explode helpers ----
+    function parseLayerIndex(name) {
+      const m = /^L_(\d+)/.exec(name || "");
+      return m ? parseInt(m[1], 10) : Number.POSITIVE_INFINITY;
+    }
+
+    function collectLayersFromModel(root) {
+      const candidates = [];
+      root.traverse(obj => {
+        if (obj.name && obj.name.startsWith("L_")) candidates.push(obj);
+      });
+
+      if (candidates.length === 0) {
+        root.children.forEach(ch => {
+          let hasGeo = false;
+          ch.traverse(n => { if (n.isMesh && n.geometry) hasGeo = true; });
+          if (hasGeo) candidates.push(ch);
+        });
+      }
+
+      return candidates.map(obj => {
+        const box = new THREE.Box3().setFromObject(obj);
+        const center = new THREE.Vector3();
+        box.getCenter(center);
+        return {
+          obj,
+          restPos: obj.position.clone(),
+          basePos: obj.position.clone(),
+          yCenter: center.y,
+          targetPos: obj.position.clone()
+        };
+      }).sort((a,b) => parseLayerIndex(a.obj.name) - parseLayerIndex(b.obj.name));
+    }
+
+function isLayerVisibleByState(L) {
+  const key = L.obj.name;
+  return layerVisibility.has(key) ? layerVisibility.get(key) : true;
+}
+
+function setExplodeTargets(open) {
+  if (!layers.length) return;
+
+  let visibleIndex = 0;
+
+  for (let i = 0; i < layers.length; i++) {
+    const L = layers[i];
+    const isVisible = isLayerVisibleByState(L);
+
+    if (open) {
+      if (isVisible) {
+        const offsetY = visibleIndex * explodeGap;
+        visibleIndex++;
+        L.targetPos = L.restPos.clone().add(new THREE.Vector3(0, offsetY, 0));
+      } else {
+        // Unsichtbare Layer "zählen" nicht und bleiben an der Rest-Position
+        L.targetPos = L.restPos.clone();
+      }
+    } else {
+      L.targetPos = L.restPos.clone();
+    }
+  }
+}
+
+
+    function startExplodeAnimation(open) {
+      exploded = open;
+      explodeAnim.active = true;
+      explodeAnim.t = 0;
+      setExplodeTargets(open);
+
+      toggleExplodeBtn.textContent = open ? "Schichten schließen" : "Schichten aufklappen";
+    }
+
+    function toggleExplode() {
+      if (!model) return;
+
+      if (!layers.length) layers = collectLayersFromModel(model);
+
+      for (const L of layers) L.basePos = L.obj.position.clone();
+
+      startExplodeAnimation(!exploded);
+    }
+
+    function easeInOutCubic(x) {
+      return x < 0.5 ? 4*x*x*x : 1 - Math.pow(-2*x + 2, 3) / 2;
+    }
+
+    function updateExplodeAnimation(delta) {
+      if (!explodeAnim.active || !layers.length) return;
+
+      explodeAnim.t += delta;
+      const u = Math.min(explodeAnim.t / explodeAnim.duration, 1);
+      const e = easeInOutCubic(u);
+
+      for (const L of layers) {
+        const from = L.basePos;
+        const to = L.targetPos ?? L.basePos;
+        L.obj.position.lerpVectors(from, to, e);
+      }
+
+      if (u >= 1) explodeAnim.active = false;
+    }
+    // ------------------------
+
+    function startAppWithModel(url) {
+      if (!scene) {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x222);
+
+        camera = new THREE.PerspectiveCamera(cameraFov, window.innerWidth/window.innerHeight, 0.1, 1000);
+
+        cameraPitch = new THREE.Object3D();
+        cameraHolder = new THREE.Object3D();
+        cameraPitch.add(camera);
+        cameraHolder.add(cameraPitch);
+        scene.add(cameraHolder);
+
+        cameraHolder.position.copy(startPosition);
+        cameraPitch.rotation.x = pitch;
+        cameraHolder.rotation.y = yaw;
+
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Renderer shadows (NEW)
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // --- Lights (NEW warm sunset + sun) ---
+        hemiLight = new THREE.HemisphereLight(0xffe3c2, 0x2a3a55, 0.55);
+        scene.add(hemiLight);
+
+        sunLight = new THREE.DirectionalLight(0xffb36b, 1.35);
+        sunLight.castShadow = true;
+
+        // mobile-friendly shadow settings
+        sunLight.shadow.mapSize.width = 1024;
+        sunLight.shadow.mapSize.height = 1024;
+
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 2000;
+        sunLight.shadow.camera.left = -600;
+        sunLight.shadow.camera.right = 600;
+        sunLight.shadow.camera.top = 600;
+        sunLight.shadow.camera.bottom = -600;
+
+        sunLight.shadow.bias = -0.0002;
+        sunLight.shadow.normalBias = 0.02;
+
+        scene.add(sunLight);
+
+        // init sun state
+        updateSun(0);
+        applySunEnabled();
+        // -------------------------------------
+
+        mobileControls.style.display = '';
+        enableMobileControls();
+
+        updateSpeedUI();
+        updateScaleUI();
+        updateFovUI();
+        animate();
+
+        window.addEventListener('resize', ()=>{
+          camera.aspect = window.innerWidth/window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
+      loadingSpinner.style.display = 'block';
+
+      new GLTFLoader().load(url, gltf => {
+        loadingSpinner.style.display = 'none';
+
+        if (model) scene.remove(model);
+
+        model = gltf.scene;
+        model.scale.set(modelScale, modelScale, modelScale);
+        model.position.set(0,0,0);
+        scene.add(model);
+
+        // collect layer nodes
+        layers = collectLayersFromModel(model);
+        exploded = false;
+        toggleExplodeBtn.textContent = "Schichten aufklappen";
+
+        // restore layer visibility
+        applyLayerVisibility();
+        renderLayerList();
+
+        // collect meshes + enable shadows (NEW)
+        groundMeshes = [];
+        gltf.scene.traverse(child => {
+          if (child.isMesh) {
+            groundMeshes.push(child);
+
+            child.castShadow = true;
+            child.receiveShadow = true;
+
+            if (child.material) child.material.needsUpdate = true;
+          }
+        });
+
+        // spawn position
+        const box = new THREE.Box3().setFromObject(model);
+        const spawnX = (box.min.x + box.max.x)/2;
+        const spawnZ = (box.min.z + box.max.z)/2;
+
+        const ray = new THREE.Raycaster(
+          new THREE.Vector3(spawnX, 9999, spawnZ),
+          new THREE.Vector3(0,-1,0), 0, 2e4
+        );
+
+        const hits = ray.intersectObjects(groundMeshes, false);
+        let y = groundLevel;
+        if (hits.length) y = hits[0].point.y + 1.6;
+
+        startPosition.set(spawnX, y, spawnZ);
+        cameraHolder.position.copy(startPosition);
+
+      }, undefined, err => {
+        loadingSpinner.style.display = 'none';
+        alert("Fehler beim Laden der Datei!");
+      });
+    }
+
+    function enableMobileControls() {
+      // Joystick
+      const joystickManager = nipplejs.create({
+        zone: document.getElementById('joystickZone'),
+        mode: 'dynamic',
+        color: '#3fcf8e',
+        size: 80
+      });
+
+      joystickManager.on('move', (evt, data) => {
+        joystickInput.x = data.vector.x;
+        joystickInput.y = data.vector.y;
+        joystickInput.force = Math.min(data.force, 1);
+      });
+
+      joystickManager.on('end', () => {
+        joystickInput.x = joystickInput.y = joystickInput.force = 0;
+      });
+
+      // ↑
+      btnUp.addEventListener('touchstart', e => {
+        e.preventDefault();
+        verticalInput =  1;
+      }, { passive: false });
+
+      btnUp.addEventListener('touchend', e => {
+        e.preventDefault();
+        verticalInput =  0;
+      }, { passive: false });
+
+      // ↓
+      btnDown.addEventListener('touchstart', e => {
+        e.preventDefault();
+        verticalInput = -1;
+      }, { passive: false });
+
+      btnDown.addEventListener('touchend', e => {
+        e.preventDefault();
+        verticalInput =  0;
+      }, { passive: false });
+
+      btnMenu.addEventListener('touchend', e => {
+        e.preventDefault();
+        menu.style.display='block';
+      }, { passive:false });
+
+      // Layers panel toggle
+      if (btnLayers) {
+        btnLayers.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          if (layerPanel.style.display === 'block') closeLayerPanel();
+          else openLayerPanel();
+        }, { passive:false });
+      }
+
+      if (btnCloseLayerPanel) {
+        btnCloseLayerPanel.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          closeLayerPanel();
+        }, { passive:false });
+      }
+
+      if (btnLayersAllOn) {
+        btnLayersAllOn.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          setAllLayersVisible(true);
+        }, { passive:false });
+      }
+
+      if (btnLayersAllOff) {
+        btnLayersAllOff.addEventListener('touchend', (e) => {
+          e.preventDefault();
+          setAllLayersVisible(false);
+        }, { passive:false });
+      }
+
+      // Kamera‐Touch (rechte Bildschirmhälfte)
+      renderer.domElement.addEventListener('touchstart', e => {
+        for (let touch of e.changedTouches) {
+          if (cameraTouchId === null && touch.clientX > window.innerWidth / 2) {
+            if (layerPanel.style.display === 'block') {
+              const rect = layerPanel.getBoundingClientRect();
+              if (touch.clientX >= rect.left && touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                continue;
+              }
+            }
+
+            cameraTouchId = touch.identifier;
+            cameraTouchActive = true;
+            lastTouchX = touch.clientX;
+            lastTouchY = touch.clientY;
+          }
+        }
+      }, { passive: false });
+
+      renderer.domElement.addEventListener('touchmove', e => {
+        if (!cameraTouchActive) return;
+        for (let touch of e.changedTouches) {
+          if (touch.identifier === cameraTouchId) {
+            const dx = touch.clientX - lastTouchX;
+            const dy = touch.clientY - lastTouchY;
+
+            yaw   -= dx * touchLookFactor;
+            pitch -= dy * touchLookFactor;
+
+            pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
+            cameraHolder.rotation.y = yaw;
+            cameraPitch.rotation.x = pitch;
+
+            lastTouchX = touch.clientX;
+            lastTouchY = touch.clientY;
+            e.preventDefault();
+          }
+        }
+      }, { passive: false });
+
+      renderer.domElement.addEventListener('touchend', e => {
+        for (let touch of e.changedTouches) {
+          if (touch.identifier === cameraTouchId) {
+            cameraTouchActive = false;
+            cameraTouchId = null;
+          }
+        }
+      }, { passive: false });
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (!renderer || !camera) return;
+
+      const delta = clock.getDelta();
+
+      updateExplodeAnimation(delta);
+      updateSun(delta); // NEW
+
+      if (!paused) {
+        const currentSpeed = sprinting ? speed.sprint : speed.base;
+
+        // Movement vector from analog joystick (horizontal only)
+        const dir = new THREE.Vector3();
+        camera.getWorldDirection(dir);
+        dir.y = 0; dir.normalize();
+
+        const right = new THREE.Vector3().crossVectors(dir, new THREE.Vector3(0,1,0)).normalize();
+
+        const v = new THREE.Vector3();
+        v.addScaledVector(dir,   joystickInput.y * joystickInput.force);
+        v.addScaledVector(right, joystickInput.x * joystickInput.force);
+        if (v.length() > 1) v.normalize();
+        v.multiplyScalar(currentSpeed * delta);
+
+        cameraHolder.position.add(v);
+
+        // Vertical movement only via buttons
+        if (flying) {
+          cameraHolder.position.y += verticalInput * currentSpeed * delta;
+        } else {
+          velocityY += gravity * delta;
+          let nextY = cameraHolder.position.y + velocityY * delta;
+
+          const downRay = new THREE.Raycaster(
+            new THREE.Vector3(cameraHolder.position.x, cameraHolder.position.y, cameraHolder.position.z),
+            new THREE.Vector3(0,-1,0), 0, 3.5
+          );
+
+          const hits = downRay.intersectObjects(groundMeshes, false);
+          let surfaceY = groundLevel;
+
+          if (hits.length) {
+            surfaceY = hits[0].point.y + 1.6;
+            if (nextY <= surfaceY) {
+              nextY = surfaceY;
+              velocityY = 0;
+              onGround = true;
+            } else {
+              onGround = false;
+            }
+          }
+          cameraHolder.position.y = nextY;
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+  </script>
+</body>
+</html>
+

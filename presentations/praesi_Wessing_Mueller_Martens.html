@@ -1,0 +1,2376 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="generator" content="html-slides v0.9.4" />
+  <title>Business Model Canvas – interaktive Präsentation</title>
+  <style>
+    :root{
+      --green:#2f6b4f;
+      --green-2:#5f8f6b;
+      --mint:#eaf4ee;
+      --dark:#1f2a25;
+      --grey:#6b756f;
+      --line:#d8e2dc;
+      --white:#fff;
+      --shadow:0 24px 70px rgba(22,38,29,.22);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--dark);
+      background:
+        radial-gradient(circle at top left, rgba(95,143,107,.28), transparent 38%),
+        radial-gradient(circle at bottom right, rgba(47,107,79,.22), transparent 34%),
+        #f7faf8;
+      overflow:hidden;
+    }
+
+    .deck{
+      height:100vh;
+      width:100vw;
+      position:relative;
+    }
+
+    .slide{
+      position:absolute;
+      inset:0;
+      padding:clamp(28px,4vw,64px);
+      padding-bottom:120px;
+      display:none;
+      opacity:0;
+      transform:translateY(14px);
+      transition:.35s ease;
+      overflow:hidden;
+    }
+
+    .slide.active{
+      display:flex;
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .slide-inner{
+      width:min(1180px,100%);
+      margin:auto;
+      min-height:calc(100vh - 190px);
+      display:flex;
+      flex-direction:column;
+      gap:28px;
+    }
+
+    .eyebrow{
+      font-weight:800;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--green);
+      font-size:13px;
+    }
+
+    h1{
+      font-size:clamp(42px,6vw,78px);
+      line-height:.95;
+      margin:0;
+      letter-spacing:-.055em;
+    }
+
+    h2{
+      font-size:clamp(32px,4vw,54px);
+      line-height:1.02;
+      margin:0;
+      letter-spacing:-.04em;
+    }
+
+    h3{
+      font-size:22px;
+      margin:0 0 8px;
+    }
+
+    p{
+      font-size:clamp(18px,2vw,24px);
+      line-height:1.45;
+      margin:0;
+      color:#34423b;
+    }
+
+    .muted{color:var(--grey)}
+
+    .hero-card{
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(216,226,220,.9);
+      border-radius:32px;
+      padding:42px;
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(12px);
+    }
+
+    .split{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:28px;
+      align-items:center;
+    }
+
+    .pillrow{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:28px;
+    }
+
+    .pill{
+      background:var(--mint);
+      border:1px solid #d7e7dc;
+      color:var(--green);
+      border-radius:999px;
+      padding:10px 14px;
+      font-weight:700;
+    }
+
+    .presenters{
+      margin-top:24px;
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      padding-left:16px;
+      border-left:3px solid rgba(95,143,107,.32);
+    }
+
+    .presenters-label{
+      font-size:11px;
+      font-weight:800;
+      letter-spacing:.1em;
+      text-transform:uppercase;
+      color:rgba(47,107,79,.8);
+    }
+
+    .presenters-names{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:clamp(15px,1.4vw,18px);
+      line-height:1.25;
+      font-weight:700;
+      color:#3c4a43;
+    }
+
+    .presenters-names span:not(:last-child)::after{
+      content:none;
+    }
+
+    .handout-qr{
+      display:flex;
+      align-items:center;
+      gap:16px;
+      margin-top:24px;
+      padding:14px;
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:18px;
+      background:rgba(255,255,255,.72);
+      box-shadow:0 12px 34px rgba(22,38,29,.09);
+    }
+
+    .handout-qr.centered{
+      margin-top:30px;
+      justify-content:center;
+      text-align:left;
+    }
+
+    .handout-qr.centered img{
+      width:140px;
+      height:140px;
+    }
+
+    .handout-qr.title-qr{
+      margin-top:22px;
+      padding:18px;
+      align-items:center;
+    }
+
+    .handout-qr.title-qr img{
+      width:148px;
+      height:148px;
+    }
+
+    .handout-qr img{
+      width:112px;
+      height:112px;
+      display:block;
+      border-radius:10px;
+      background:#fff;
+      padding:6px;
+      border:1px solid rgba(216,226,220,.9);
+    }
+
+    .handout-link{
+      width:112px;
+      height:112px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:10px;
+      background:#fff;
+      color:var(--green);
+      border:2px solid rgba(47,107,79,.22);
+      text-decoration:none;
+      font-weight:850;
+      font-size:28px;
+    }
+
+    .handout-qr strong{
+      display:block;
+      margin-bottom:5px;
+      color:var(--green);
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .handout-qr span{
+      display:block;
+      max-width:260px;
+      color:#34423b;
+      font-size:clamp(15px,1.45vw,18px);
+      line-height:1.35;
+      font-weight:700;
+    }
+
+    .canvas-wrap{
+      position:relative;
+      min-height:520px;
+      padding-bottom:20px;
+    }
+
+    .canvas{
+      display:grid;
+      grid-template-columns:1.05fr 1.1fr 1.1fr 1.05fr .95fr;
+      grid-template-rows:1fr 1fr .8fr;
+      gap:12px;
+      height:min(560px,calc(100vh - 310px));
+      min-height:460px;
+      transition:.25s ease;
+    }
+
+    .tile{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:rgba(255,255,255,.83);
+      padding:18px;
+      box-shadow:0 9px 28px rgba(32,49,39,.08);
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+      transition:.25s ease;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+    }
+
+    .tile:hover{
+      transform:translateY(-3px);
+      border-color:rgba(47,107,79,.38);
+    }
+
+    .tile.active-tile{
+      transform:scale(1.025);
+      border:2px solid var(--green);
+      box-shadow:0 18px 50px rgba(47,107,79,.22);
+      z-index:3;
+    }
+
+    .canvas.dim .tile:not(.active-tile){
+      filter:blur(2.2px) grayscale(.12);
+      opacity:.42;
+      transform:scale(.985);
+    }
+
+    .tile .icon{
+      font-size:30px;
+      margin-bottom:10px;
+    }
+
+    .tile .title{
+      font-weight:850;
+      font-size:19px;
+      line-height:1.1;
+    }
+
+    .tile .hint{
+      font-size:13px;
+      color:var(--grey);
+      margin-top:10px;
+      line-height:1.35;
+    }
+
+    .partners{grid-row:1/3}
+    .activities{grid-column:2}
+    .resources{grid-column:2;grid-row:2}
+    .value{grid-column:3;grid-row:1/3}
+    .relationships{grid-column:4}
+    .channels{grid-column:4;grid-row:2}
+    .segments{grid-column:5;grid-row:1/3}
+    .costs{grid-column:1/3;grid-row:3}
+    .revenue{grid-column:3/6;grid-row:3}
+
+    .bubble{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%) scale(.95);
+      width:min(560px,92%);
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:26px;
+      opacity:0;
+      pointer-events:none;
+      transition:.25s ease;
+      z-index:5;
+    }
+
+    .bubble.show{
+      opacity:1;
+      transform:translate(-50%,-50%) scale(1);
+      pointer-events:auto;
+    }
+
+    .bubble-header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .bubble-icon{
+      font-size:34px;
+      background:var(--mint);
+      border-radius:16px;
+      width:58px;
+      height:58px;
+      display:grid;
+      place-items:center;
+    }
+
+    .bubble h3{font-size:26px}
+    .bubble p{font-size:17px}
+
+    .bubble ul{
+      font-size:17px;
+      line-height:1.42;
+      margin:14px 0 0;
+      padding-left:22px;
+    }
+
+    .bubble li{margin:.35em 0}
+
+    .close{
+      position:absolute;
+      right:18px;
+      top:16px;
+      border:0;
+      background:#eef5f1;
+      border-radius:999px;
+      width:34px;
+      height:34px;
+      cursor:pointer;
+      font-size:20px;
+    }
+
+    .grid3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:18px;
+    }
+
+    .mini-card{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:22px;
+      box-shadow:0 10px 30px rgba(32,49,39,.08);
+    }
+
+    .mini-card p{font-size:17px}
+    .mini-card .big{
+      font-size:34px;
+      margin-bottom:12px;
+    }
+
+    .origin-note{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-top:-4px;
+      padding-top:4px;
+    }
+
+    .origin-item{
+      border-left:3px solid rgba(95,143,107,.35);
+      padding-left:16px;
+    }
+
+    .origin-item strong{
+      display:block;
+      margin-bottom:5px;
+      color:var(--green);
+      font-size:13px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+
+    .origin-item p{
+      font-size:clamp(16px,1.5vw,19px);
+      line-height:1.35;
+      color:#34423b;
+    }
+
+    .question-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .question-card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.86);
+      border-radius:18px;
+      padding:16px;
+      cursor:pointer;
+      box-shadow:0 8px 24px rgba(32,49,39,.07);
+      transition:.2s ease;
+      min-height:132px;
+    }
+
+    .question-card:hover,
+    .question-card.active-question{
+      border-color:rgba(47,107,79,.48);
+      transform:translateY(-2px);
+      box-shadow:0 14px 34px rgba(47,107,79,.14);
+    }
+
+    .question-card .label{
+      font-size:15px;
+      font-weight:850;
+      margin-bottom:8px;
+    }
+
+    .question-card .question{
+      font-size:15px;
+      line-height:1.35;
+      color:#526057;
+    }
+
+    .detail-panel{
+      border:1px solid rgba(47,107,79,.24);
+      border-radius:22px;
+      background:#f9fcfa;
+      padding:20px;
+      box-shadow:0 14px 36px rgba(32,49,39,.08);
+      min-height:146px;
+    }
+
+    .detail-panel h3{
+      font-size:22px;
+      margin:0 0 8px;
+    }
+
+    .detail-panel p{
+      font-size:17px;
+    }
+
+    .network-slide{
+      width:min(1320px,100%);
+      gap:20px;
+    }
+
+    .dependency-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1fr) clamp(270px,24vw,340px);
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .dependency-map{
+      position:relative;
+      height:min(620px,calc(100vh - 245px));
+      min-height:500px;
+      border:1px solid rgba(216,226,220,.9);
+      border-radius:28px;
+      background:
+        linear-gradient(120deg, rgba(255,255,255,.92), rgba(234,244,238,.72)),
+        radial-gradient(circle at 50% 50%, rgba(95,143,107,.18), transparent 44%);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .dependency-map::before{
+      content:"";
+      position:absolute;
+      inset:22px;
+      border:1px dashed rgba(47,107,79,.18);
+      border-radius:24px;
+      pointer-events:none;
+    }
+
+    .link-layer{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index:1;
+    }
+
+    .link-line{
+      stroke:rgba(47,107,79,.18);
+      stroke-width:2;
+      stroke-linecap:round;
+      transition:.25s ease;
+    }
+
+    .link-line.active-link{
+      stroke:rgba(47,107,79,.48);
+      stroke-width:2.4;
+      filter:drop-shadow(0 0 5px rgba(47,107,79,.18));
+      stroke-dasharray:9 13;
+      animation:dashFlow 2.4s linear infinite;
+    }
+
+    .link-line.secondary-link{
+      stroke:rgba(47,107,79,.2);
+      stroke-width:1.35;
+      filter:none;
+      stroke-dasharray:4 12;
+      animation:dashFlow 4.8s linear infinite;
+    }
+
+    .edge-arrow{
+      fill:rgba(47,107,79,.58);
+      opacity:.7;
+    }
+
+    .edge-arrow.secondary-arrow{
+      fill:rgba(47,107,79,.3);
+      opacity:.45;
+    }
+
+    .node-bubble{
+      position:absolute;
+      left:var(--x);
+      top:var(--y);
+      transform:translate(-50%,-50%);
+      width:clamp(136px,13vw,184px);
+      min-height:64px;
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:999px;
+      background:rgba(255,255,255,.9);
+      color:var(--dark);
+      box-shadow:0 14px 34px rgba(32,49,39,.11);
+      cursor:pointer;
+      font-weight:850;
+      font-size:clamp(12px,1vw,14px);
+      line-height:1.15;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:12px;
+      z-index:3;
+      animation:floatNode 4.8s ease-in-out infinite;
+      animation-delay:var(--delay);
+      transition:.25s ease;
+      touch-action:none;
+      cursor:grab;
+    }
+
+    .node-content{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      width:100%;
+    }
+
+    .node-icon{
+      font-size:18px;
+      line-height:1;
+      flex:0 0 auto;
+    }
+
+    .node-label{
+      overflow-wrap:normal;
+      hyphens:auto;
+    }
+
+    .node-bubble:hover,
+    .node-bubble.active-node{
+      background:var(--green);
+      color:#fff;
+      border-color:var(--green);
+      transform:translate(-50%,-50%) scale(1.08);
+      box-shadow:0 22px 46px rgba(47,107,79,.28);
+    }
+
+    .node-bubble.dragging-node{
+      cursor:grabbing;
+      animation-play-state:paused;
+      transition:none;
+      z-index:6;
+    }
+
+    .node-bubble.related-node{
+      border-color:rgba(47,107,79,.55);
+      background:#f4faf6;
+      box-shadow:0 18px 38px rgba(47,107,79,.16);
+    }
+
+    .node-bubble.secondary-node{
+      border-color:rgba(47,107,79,.28);
+      background:rgba(248,251,249,.86);
+      box-shadow:0 12px 26px rgba(47,107,79,.08);
+    }
+
+    .stream-tag{
+      position:absolute;
+      left:var(--sx);
+      top:var(--sy);
+      transform:translate(-50%,-50%);
+      padding:7px 11px;
+      border-radius:999px;
+      background:rgba(31,42,37,.82);
+      color:#fff;
+      font-size:12px;
+      font-weight:850;
+      z-index:2;
+      opacity:0;
+      pointer-events:none;
+      box-shadow:0 8px 18px rgba(31,42,37,.16);
+    }
+
+    .stream-tag.active-stream{
+      --stream-opacity:1;
+      animation:streamMove 7.4s ease-in-out infinite;
+      animation-delay:var(--tag-delay);
+    }
+
+    .stream-tag.secondary-stream{
+      --stream-opacity:.42;
+      padding:5px 9px;
+      background:rgba(47,107,79,.58);
+      font-size:11px;
+      box-shadow:0 6px 14px rgba(47,107,79,.1);
+      animation-duration:10.8s;
+    }
+
+    .network-panel{
+      position:relative;
+      left:auto;
+      right:auto;
+      bottom:auto;
+      transform:none;
+      width:auto;
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:24px;
+      background:rgba(255,255,255,.94);
+      box-shadow:0 18px 48px rgba(32,49,39,.14);
+      padding:22px;
+      z-index:4;
+      align-self:stretch;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .network-panel h3{
+      font-size:22px;
+      margin:0 0 10px;
+    }
+
+    .network-panel p{
+      font-size:15px;
+      line-height:1.45;
+    }
+
+    .network-panel .aspect-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+
+    .aspect-chip{
+      background:var(--mint);
+      color:var(--green);
+      border:1px solid #d7e7dc;
+      border-radius:999px;
+      padding:7px 10px;
+      font-size:12px;
+      font-weight:850;
+    }
+
+    @keyframes floatNode{
+      0%,100%{translate:0 0}
+      50%{translate:0 -8px}
+    }
+
+    @keyframes dashFlow{
+      to{stroke-dashoffset:-22}
+    }
+
+    @keyframes streamMove{
+      0%{
+        left:var(--sx);
+        top:var(--sy);
+        opacity:0;
+      }
+      16%,82%{opacity:var(--stream-opacity,1)}
+      100%{
+        left:var(--tx);
+        top:var(--ty);
+        opacity:0;
+      }
+    }
+
+    .switch-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .disruption-board{
+      display:grid;
+      grid-template-columns:.9fr 1.1fr;
+      gap:22px;
+      align-items:stretch;
+    }
+
+    .disruption-control,
+    .disruption-output{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.88);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 12px 34px rgba(32,49,39,.09);
+    }
+
+    .scale-labels{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:18px;
+      font-size:13px;
+      color:var(--grey);
+      font-weight:850;
+    }
+
+    .disruption-range{
+      width:100%;
+      accent-color:var(--green);
+      cursor:pointer;
+    }
+
+    .disruption-meter{
+      height:16px;
+      border-radius:999px;
+      background:#e6efe9;
+      overflow:hidden;
+      margin:22px 0;
+    }
+
+    .disruption-fill{
+      height:100%;
+      width:33%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#8aa893,var(--green));
+      transition:.35s ease;
+    }
+
+    .disruption-state{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-top:20px;
+    }
+
+    .state-icon{
+      width:56px;
+      height:56px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      background:var(--mint);
+      font-size:28px;
+      flex:0 0 auto;
+    }
+
+    .disruption-state h3{
+      font-size:24px;
+      margin:0 0 4px;
+    }
+
+    .disruption-state p,
+    .disruption-output p{
+      font-size:17px;
+    }
+
+    .impact-map{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .impact-node{
+      min-height:76px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#f8fbf9;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:11px;
+      font-size:13px;
+      font-weight:850;
+      color:#7c8781;
+      transition:.28s ease;
+    }
+
+    .impact-node.active-impact{
+      color:var(--dark);
+      background:#fff;
+      border-color:rgba(47,107,79,.5);
+      box-shadow:0 12px 26px rgba(47,107,79,.14);
+      transform:translateY(-2px);
+    }
+
+    .impact-node span:first-child{
+      font-size:18px;
+      line-height:1;
+    }
+
+    .disruption-list{
+      margin:18px 0 0;
+      padding-left:22px;
+      font-size:17px;
+      line-height:1.45;
+    }
+
+    .disruption-list li{
+      margin:.42em 0;
+    }
+
+    .switch-button,
+    .stage-button{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--green);
+      border-radius:999px;
+      padding:11px 16px;
+      font-weight:850;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .switch-button.active-switch,
+    .stage-button.active-stage{
+      background:var(--green);
+      color:#fff;
+      border-color:var(--green);
+      box-shadow:0 10px 26px rgba(47,107,79,.22);
+    }
+
+    .toggle-board{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:stretch;
+    }
+
+    .digital-slide{
+      width:min(1320px,100%);
+      gap:12px;
+    }
+
+    .digital-slide h2{
+      font-size:clamp(30px,3.2vw,46px);
+      line-height:1.02;
+    }
+
+    .digital-slide .toggle-board{
+      gap:14px;
+    }
+
+    .digital-slide .impact-card{
+      min-height:190px;
+      padding:18px;
+    }
+
+    .digital-slide .impact-card h3{
+      font-size:21px;
+    }
+
+    .digital-slide .impact-card ul{
+      font-size:15px;
+      line-height:1.38;
+      margin-top:10px;
+    }
+
+    .example-card{
+      grid-column:1/-1;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.88);
+      border-radius:22px;
+      padding:16px;
+      box-shadow:0 10px 30px rgba(32,49,39,.08);
+      min-height:260px;
+      display:grid;
+      grid-template-rows:auto 1fr;
+      gap:10px;
+    }
+
+    .example-card h3{
+      font-size:21px;
+      margin:0;
+    }
+
+    .example-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+    }
+
+    .example-tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      justify-content:flex-end;
+    }
+
+    .example-tab{
+      border:1px solid rgba(96,126,111,.28);
+      background:rgba(255,255,255,.78);
+      border-radius:999px;
+      padding:8px 13px;
+      font:700 13px/1 'Inter',sans-serif;
+      color:#526258;
+      cursor:pointer;
+      transition:.2s ease;
+      white-space:nowrap;
+    }
+
+    .example-tab:hover,
+    .example-tab.active-example{
+      background:#2f6f4e;
+      border-color:#2f6f4e;
+      color:white;
+      box-shadow:0 8px 20px rgba(47,111,78,.18);
+    }
+
+    .example-frame{
+      position:relative;
+      display:none;
+      min-height:min(235px,26vh);
+    }
+
+    .example-frame.active-example-frame{
+      display:block;
+    }
+
+    .iteration-embed{
+      width:100%;
+      height:min(235px,26vh);
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:18px;
+      background:#f7faf8;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);
+    }
+
+    .viewer-link{
+      position:absolute;
+      right:12px;
+      bottom:12px;
+      border:1px solid rgba(255,255,255,.62);
+      border-radius:999px;
+      padding:8px 11px;
+      background:rgba(247,250,248,.88);
+      color:#2f6f4e;
+      font-size:12px;
+      font-weight:800;
+      text-decoration:none;
+      box-shadow:0 8px 22px rgba(32,49,39,.12);
+      backdrop-filter:blur(8px);
+    }
+
+    .impact-card{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.88);
+      border-radius:22px;
+      padding:22px;
+      box-shadow:0 10px 30px rgba(32,49,39,.08);
+      min-height:260px;
+    }
+
+    .impact-card h3{
+      font-size:24px;
+    }
+
+    .impact-card ul{
+      margin:14px 0 0;
+      padding-left:22px;
+      font-size:18px;
+      line-height:1.48;
+    }
+
+    .impact-card li{
+      margin:.45em 0;
+    }
+
+    .stage-layout{
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:22px;
+      align-items:stretch;
+    }
+
+    .stage-tabs{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .stage-button{
+      border-radius:18px;
+      text-align:left;
+    }
+
+    .stage-panel{
+      border:1px solid var(--line);
+      border-radius:24px;
+      background:rgba(255,255,255,.88);
+      padding:28px;
+      box-shadow:var(--shadow);
+      min-height:340px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .stage-panel .stage-number{
+      width:48px;
+      height:48px;
+      border-radius:16px;
+      display:grid;
+      place-items:center;
+      background:var(--mint);
+      color:var(--green);
+      font-weight:900;
+      margin-bottom:18px;
+    }
+
+    .stage-panel p{
+      font-size:19px;
+    }
+
+    .stage-panel ul{
+      margin:18px 0 0;
+      padding-left:22px;
+      font-size:18px;
+      line-height:1.45;
+    }
+
+    .controls{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%);
+      display:flex;
+      gap:10px;
+      align-items:center;
+      z-index:9999;
+      background:rgba(255,255,255,.82);
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px;
+      backdrop-filter:blur(10px);
+      box-shadow:0 12px 40px rgba(22,38,29,.15);
+    }
+
+    .controls button{
+      border:0;
+      background:var(--green);
+      color:white;
+      border-radius:999px;
+      padding:10px 16px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .controls button.secondary{
+      background:#edf4ef;
+      color:var(--green);
+    }
+
+    .counter{
+      font-weight:800;
+      color:var(--grey);
+      min-width:54px;
+      text-align:center;
+      font-size:14px;
+    }
+
+    .speaker-note{
+      position:fixed;
+      right:18px;
+      bottom:22px;
+      color:#8a948e;
+      font-size:12px;
+      z-index:9999;
+    }
+
+    @media print{
+      @page{
+        size:16in 9in;
+        margin:0;
+      }
+
+      html,
+      body{
+        width:100%;
+        height:auto;
+        overflow:visible;
+        background:#f7faf8;
+        -webkit-print-color-adjust:exact;
+        print-color-adjust:exact;
+      }
+
+      body{
+        margin:0;
+      }
+
+      .controls,
+      .speaker-note{
+        display:none!important;
+      }
+
+      .deck{
+        width:auto;
+        height:auto;
+        overflow:visible;
+      }
+
+      .slide,
+      .slide.active{
+        position:relative;
+        inset:auto;
+        display:flex!important;
+        opacity:1!important;
+        transform:none!important;
+        transition:none!important;
+        width:100vw;
+        height:100vh;
+        min-height:100vh;
+        padding-bottom:clamp(28px,4vw,64px);
+        break-after:page;
+        page-break-after:always;
+      }
+
+      .slide:last-child{
+        break-after:auto;
+        page-break-after:auto;
+      }
+
+      .slide-inner{
+        min-height:calc(100vh - 128px);
+      }
+    }
+
+    @media(max-width:900px){
+      body{overflow:auto}
+
+      .deck{
+        height:auto;
+        min-height:100vh;
+      }
+
+      .slide{
+        position:relative;
+        min-height:100vh;
+        overflow:visible;
+        padding-bottom:130px;
+      }
+
+      .split,
+      .grid3,
+      .question-grid,
+      .dependency-layout,
+      .toggle-board,
+      .disruption-board,
+      .impact-map,
+      .stage-layout{
+        grid-template-columns:1fr;
+      }
+
+      .dependency-map{
+        height:620px;
+      }
+
+      .network-panel{
+        width:auto;
+      }
+
+      .stage-tabs{
+        flex-direction:row;
+        overflow:auto;
+      }
+
+      .stage-button{
+        min-width:180px;
+      }
+
+      .example-card{
+        min-height:330px;
+      }
+
+      .example-head{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+
+      .example-tabs{
+        justify-content:flex-start;
+      }
+
+      .example-frame{
+        min-height:290px;
+      }
+
+      .iteration-embed{
+        height:290px;
+      }
+
+      .canvas-wrap{
+        min-height:auto;
+      }
+
+      .canvas{
+        grid-template-columns:1fr;
+        grid-template-rows:auto;
+        height:auto;
+        min-height:auto;
+      }
+
+      .tile{
+        grid-column:auto!important;
+        grid-row:auto!important;
+        min-height:118px;
+      }
+
+      .controls{
+        position:fixed;
+      }
+
+      .speaker-note{
+        display:none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="deck">
+    <section class="slide active" data-slide="0" data-note="Einstieg: Warum BMC? KI und Digitalisierung als Auslöser der Aufgabenstellung nennen.">
+      <div class="slide-inner split">
+        <div>
+          <div class="eyebrow">Modul 11740 · Unternehmen organisieren und führen</div>
+          <h1>Business Model Canvas</h1>
+          <p style="margin-top:22px">Eine interaktive Kurzpräsentation zur theoriebasierten Exploration – mit Ausblick auf ein Planungsbüro im Kontext von KI und Digitalisierung.</p>
+          <div class="pillrow">
+            
+            <span class="pill">BMC-Theorie</span>
+            <span class="pill">Planungsbüro</span>
+            <span class="pill">KI & Digitalisierung</span>
+          </div>
+          <div class="presenters" aria-label="Vortragende">
+            <div class="presenters-label">Vortragende</div>
+            <div class="presenters-names">
+              <span>Frederik Wessing</span>
+              <span>Paul Müller</span>
+              <span>Joe Martens</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="hero-card">
+            <h3>Leitfrage</h3>
+            <p>Wie hilft das Business Model Canvas dabei, ein Geschäftsmodell sichtbar zu machen und strategisch weiterzuentwickeln?</p>
+          </div>
+          <div class="handout-qr title-qr">
+            <a class="handout-link" href="../generated_appendix/Theoriebasierte_Exploration_BMC_from_tex.pdf" target="_blank" rel="noopener" aria-label="Handout als PDF öffnen">PDF</a>
+            <div>
+              <strong>Handout</strong>
+              <span>Hier könnt ihr das passende Theorie-Handout öffnen.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="1" data-note="Hier Definition knapp halten. Danach auf die Canvas-Logik überleiten.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Begriff und Zweck</div>
+          <h2>Das BMC macht Geschäftsmodelle sichtbar.</h2>
+          <p class="muted" style="margin-top:14px;max-width:900px">Es ist ein visuelles Werkzeug, das ein Geschäftsmodell kompakt beschreibt, vergleicht und diskutierbar macht. Im Unterschied zum klassischen Businessplan zeigt es die Logik von Wertangebot, Markt, Organisation und Wirtschaftlichkeit auf einer Fläche.</p>
+        </div>
+
+        <div class="grid3">
+          <div class="mini-card">
+            <div class="big">🧩</div>
+            <h3>Strukturieren</h3>
+            <p>Ein Geschäftsmodell wird in neun verständliche Bausteine zerlegt.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">👥</div>
+            <h3>Kommunizieren</h3>
+            <p>Teams erhalten eine gemeinsame Sprache für Kundennutzen, Ressourcen, Partner und Wirtschaftlichkeit.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">🚀</div>
+            <h3>Weiterentwickeln</h3>
+            <p>Veränderungen durch KI, Digitalisierung oder Markttrends werden systematisch überprüfbar.</p>
+          </div>
+        </div>
+
+        <div class="origin-note">
+          <div class="origin-item">
+            <strong>Entwickelt und bekannt gemacht von</strong>
+            <p>Alexander Osterwalder und Yves Pigneur.</p>
+          </div>
+          <div class="origin-item">
+            <strong>Warum</strong>
+            <p>Es zeigt zentrale Annahmen, Abhängigkeiten und Wechselwirkungen schneller als ein klassischer Businessplan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="2" data-note="Interaktion: Kacheln anklicken. Nicht alle ausführlich erklären, sondern 4–5 Highlights verwenden.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Interaktiver Canvas</div>
+          <h2>Die Hauptfelder des BMC</h2>
+          <p class="muted">Rechts stehen Kundenseite und Markt, links die interne Wertschöpfung. Die Verbindungen zeigen, dass sich Änderungen an einer Stelle meist auf mehrere andere Bausteine auswirken.</p>
+        </div>
+
+        <div class="canvas-wrap">
+          <div class="canvas" id="canvas">
+            <div class="tile partners" data-key="partners">
+              <div>
+                <div class="icon">🤝</div>
+                <div class="title">Schlüsselpartner</div>
+              </div>
+              <div class="hint">Fachplaner, Behörden, Gutachter</div>
+            </div>
+
+            <div class="tile activities" data-key="activities">
+              <div>
+                <div class="icon">🛠️</div>
+                <div class="title">Schlüsselaktivitäten</div>
+              </div>
+              <div class="hint">Analyse, Entwurf, Ausschreibung</div>
+            </div>
+
+            <div class="tile resources" data-key="resources">
+              <div>
+                <div class="icon">💻</div>
+                <div class="title">Schlüsselressourcen</div>
+              </div>
+              <div class="hint">Fachwissen, CAD, BIM, GIS, KI</div>
+            </div>
+
+            <div class="tile value" data-key="value">
+              <div>
+                <div class="icon">🌿</div>
+                <div class="title">Wertangebote</div>
+              </div>
+              <div class="hint">Freiraumplanung, Klima, Gestaltung</div>
+            </div>
+
+            <div class="tile relationships" data-key="relationships">
+              <div>
+                <div class="icon">💬</div>
+                <div class="title">Kundenbeziehungen</div>
+              </div>
+              <div class="hint">Beratung, Beteiligung, Abstimmung</div>
+            </div>
+
+            <div class="tile channels" data-key="channels">
+              <div>
+                <div class="icon">📡</div>
+                <div class="title">Kanäle</div>
+              </div>
+              <div class="hint">Website, Wettbewerbe, Netzwerke</div>
+            </div>
+
+            <div class="tile segments" data-key="segments">
+              <div>
+                <div class="icon">🏛️</div>
+                <div class="title">Kundensegmente</div>
+              </div>
+              <div class="hint">Kommunen, private Bauherren, Entwickler</div>
+            </div>
+
+            <div class="tile costs" data-key="costs">
+              <div>
+                <div class="icon">📉</div>
+                <div class="title">Kostenstruktur</div>
+              </div>
+              <div class="hint">Personal, Software, Akquise</div>
+            </div>
+
+            <div class="tile revenue" data-key="revenue">
+              <div>
+                <div class="icon">💶</div>
+                <div class="title">Einnahmequellen</div>
+              </div>
+              <div class="hint">Honorare, Wettbewerbe, Beratung</div>
+            </div>
+          </div>
+
+          <div class="bubble" id="bubble">
+            <button class="close" id="close" aria-label="Schließen">×</button>
+
+            <div class="bubble-header">
+              <div class="bubble-icon" id="bubbleIcon">🌿</div>
+              <div>
+                <div class="eyebrow" id="bubbleEyebrow">Canvas-Baustein</div>
+                <h3 id="bubbleTitle">Wertangebote</h3>
+              </div>
+            </div>
+
+            <p id="bubbleText">Beschreibung</p>
+            <ul id="bubbleList"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="3" data-note="Interaktion: Einen Baustein anklicken. Streams können zum aktiven Knoten hin, vom aktiven Knoten weg oder als dezente zweite Wirkungsebene zwischen Folgeknoten laufen.">
+      <div class="slide-inner network-slide">
+        <div>
+          <div class="eyebrow">Wechselwirkungen</div>
+          <h2>Verändert sich ein Baustein, bewegen sich andere mit.</h2>
+          <p class="muted">Geschäftsprozesse sind nicht statisch und müssen in einem dynamischen Zusammenhang gedacht und entwickelt werden</p>
+        </div>
+
+        <div class="dependency-layout">
+          <div class="dependency-map" id="dependencyMap">
+            <svg class="link-layer" id="linkLayer" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+            <button class="node-bubble active-node" data-node="value" style="--x:50%;--y:48%;--delay:-.6s"><span class="node-content"><span class="node-icon">🌿</span><span class="node-label">Wertangebote</span></span></button>
+            <button class="node-bubble" data-node="segments" style="--x:82%;--y:20%;--delay:-1.4s"><span class="node-content"><span class="node-icon">🏛️</span><span class="node-label">Kunden-<br>segmente</span></span></button>
+            <button class="node-bubble" data-node="relationships" style="--x:84%;--y:48%;--delay:-.2s"><span class="node-content"><span class="node-icon">💬</span><span class="node-label">Kunden-<br>beziehungen</span></span></button>
+            <button class="node-bubble" data-node="channels" style="--x:72%;--y:68%;--delay:-2s"><span class="node-content"><span class="node-icon">📡</span><span class="node-label">Kanäle</span></span></button>
+            <button class="node-bubble" data-node="revenue" style="--x:50%;--y:74%;--delay:-1s"><span class="node-content"><span class="node-icon">💶</span><span class="node-label">Einnahme-<br>quellen</span></span></button>
+            <button class="node-bubble" data-node="costs" style="--x:28%;--y:68%;--delay:-1.8s"><span class="node-content"><span class="node-icon">📉</span><span class="node-label">Kostenstruktur</span></span></button>
+            <button class="node-bubble" data-node="partners" style="--x:16%;--y:48%;--delay:-.4s"><span class="node-content"><span class="node-icon">🤝</span><span class="node-label">Schlüssel-<br>partner</span></span></button>
+            <button class="node-bubble" data-node="activities" style="--x:18%;--y:20%;--delay:-1.2s"><span class="node-content"><span class="node-icon">🛠️</span><span class="node-label">Schlüssel-<br>aktivitäten</span></span></button>
+            <button class="node-bubble" data-node="resources" style="--x:50%;--y:13%;--delay:-.8s"><span class="node-content"><span class="node-icon">💻</span><span class="node-label">Schlüssel-<br>ressourcen</span></span></button>
+          </div>
+
+          <div class="network-panel">
+            <h3 id="networkTitle">Wertangebote als Zentrum</h3>
+            <p id="networkText">Neue Leistungen wie KI-gestützte Variantenprüfung oder digitale Beteiligung verändern nicht nur den Kundennutzen, sondern auch Ressourcen, Aktivitäten, Kosten und Erlöse.</p>
+            <div class="aspect-row" id="networkAspects">
+              <span class="aspect-chip">Kundennutzen</span>
+              <span class="aspect-chip">Daten</span>
+              <span class="aspect-chip">Prozess</span>
+              <span class="aspect-chip">Wirtschaftlichkeit</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="4" data-note="Interaktion: Slider langsam von links nach rechts bewegen. Zeigen, dass Digitalisierung vom Werkzeug zur Geschäftsmodellwirkung werden kann.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Tool oder Geschäftsmodell?</div>
+          <h2>Digitalisierung ist nicht automatisch Disruption.</h2>
+          <p class="muted">Der Unterschied liegt darin, wie viele Bausteine des Geschäftsmodells wirklich mitverändert werden.</p>
+        </div>
+
+        <div class="disruption-board">
+          <div class="disruption-control">
+            <div class="scale-labels">
+              <span>einzelnes Werkzeug</span>
+              <span>Geschäftsmodellwirkung</span>
+            </div>
+            <input class="disruption-range" id="disruptionRange" type="range" min="0" max="2" step="1" value="0" aria-label="Wirkung der Digitalisierung" />
+            <div class="disruption-meter">
+              <div class="disruption-fill" id="disruptionFill"></div>
+            </div>
+
+            <div class="disruption-state">
+              <div class="state-icon" id="disruptionIcon">🛠️</div>
+              <div>
+                <h3 id="disruptionTitle">Toolwirkung</h3>
+                <p id="disruptionText">Ein digitales Werkzeug verbessert eine einzelne Tätigkeit, ohne die Logik des Unternehmens grundsätzlich zu verändern.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="disruption-output">
+            <h3 id="disruptionOutputTitle">Betroffene Bausteine</h3>
+            <p id="disruptionOutputText">Zunächst leuchten vor allem Schlüsselaktivitäten und Schlüsselressourcen: Das Büro arbeitet effizienter, bietet aber noch kein anderes Geschäftsmodell an.</p>
+
+            <div class="impact-map" id="impactMap">
+              <div class="impact-node active-impact" data-impact-node="activities"><span>🛠️</span><span>Schlüssel-<br>aktivitäten</span></div>
+              <div class="impact-node active-impact" data-impact-node="resources"><span>💻</span><span>Schlüssel-<br>ressourcen</span></div>
+              <div class="impact-node" data-impact-node="value"><span>🌿</span><span>Wertangebote</span></div>
+              <div class="impact-node" data-impact-node="relationships"><span>💬</span><span>Kunden-<br>beziehungen</span></div>
+              <div class="impact-node" data-impact-node="costs"><span>📉</span><span>Kostenstruktur</span></div>
+              <div class="impact-node" data-impact-node="revenue"><span>💶</span><span>Einnahme-<br>quellen</span></div>
+            </div>
+
+            <ul class="disruption-list" id="disruptionList">
+              <li>Beispiel: KI hilft bei Recherche oder Bildvarianten.</li>
+              <li>Effizienz steigt, aber Kundennutzen und Erlöslogik bleiben ähnlich.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="5" data-note="Interaktion: Zwischen Heute und Zukunft wechseln. Unter Konzeptfindung / Entwurfsiteration kann mit dem Mausrad durch KI-Varianten iteriert oder der Web3DViewer geöffnet werden.">
+      <div class="slide-inner digital-slide">
+        <div>
+          <div class="eyebrow">Digitalisierung als Veränderung</div>
+          <h2>Digitalisierung verschiebt Prozesse, Ressourcen und Erwartungen.</h2>
+        </div>
+
+        <div class="switch-row">
+          <button class="switch-button active-switch" data-impact="today">Heute</button>
+          <button class="switch-button" data-impact="future">Zukunft mit KI</button>
+        </div>
+
+        <div class="toggle-board">
+          <div class="impact-card">
+            <h3 id="impactLeftTitle">Typische Arbeitslogik</h3>
+            <ul id="impactLeftList">
+              <li>Ort, Nutzung und Bestand werden fachlich analysiert.</li>
+              <li>Entwurf, Ausschreibung und Abstimmung sind stark projektbezogen.</li>
+              <li>Kommunikation läuft über Pläne, Termine, Mails und Besprechungen.</li>
+            </ul>
+          </div>
+
+          <div class="impact-card">
+            <h3 id="impactRightTitle">BMC-Wirkung</h3>
+            <ul id="impactRightList">
+              <li>Wertangebot: gestalterisch und fachlich überzeugende Freiräume.</li>
+              <li>Ressourcen: Fachwissen, Referenzen, Software und Teamkompetenz.</li>
+              <li>Kosten: Personal, Bürobetrieb, Software, Akquise und Wettbewerbe.</li>
+            </ul>
+          </div>
+
+          <div class="example-card">
+            <div class="example-head">
+              <h3>Anwendungsbeispiele: Konzeptfindung / Entwurfsiteration</h3>
+              <div class="example-tabs" aria-label="Anwendungsbeispiele auswählen">
+                <button class="example-tab active-example" data-example="iteration" type="button">KI-Iteration</button>
+                <button class="example-tab" data-example="web3d" type="button">Web3DViewer</button>
+              </div>
+            </div>
+            <div class="example-frame active-example-frame" data-example-frame="iteration">
+              <iframe class="iteration-embed" src="ki_iteration_animation.html?embed=1" title="KI-gestützte schnelle Varianteniteration in der Entwurfsplanung"></iframe>
+            </div>
+            <div class="example-frame" data-example-frame="web3d">
+              <!-- Lokale Viewer-Kopie bewahrt relative Modellpfade; Fallback bleibt sichtbar, falls die bestehenden externen Module des Viewers blockiert sind. -->
+              <iframe class="iteration-embed viewer-embed" data-src="web3dviewer_embed/desktop.html" title="Web3DViewer für schnelle digitale Entwurfsprüfung"></iframe>
+              <a class="viewer-link" href="web3dviewer_embed/desktop.html" target="_blank" rel="noopener">Lokal öffnen</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="6" data-note="Interaktion: Die vier Schritte anklicken. Damit wird der Bezug zur Seminaraufgabe klar.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Seminarlogik</div>
+          <h2>Aus dem BMC wird ein Weg zur Strategie.</h2>
+          <p class="muted">Die Methode hilft, vom bestehenden Geschäftsmodell zu konkreten Projekten zu kommen.</p>
+        </div>
+
+        <div class="stage-layout">
+          <div class="stage-tabs">
+            <button class="stage-button active-stage" data-stage="0">1. Ist-BMC</button>
+            <button class="stage-button" data-stage="1">2. Potenziale</button>
+            <button class="stage-button" data-stage="2">3. Strategie-BMC</button>
+            <button class="stage-button" data-stage="3">4. Projekt-BMC</button>
+          </div>
+
+          <div class="stage-panel">
+            <div class="stage-number" id="stageNumber">1</div>
+            <h3 id="stageTitle">Ist-BMC erfassen</h3>
+            <p id="stageText">Zuerst wird beschrieben, wie das untersuchte Unternehmen heute Wert schafft, Kunden erreicht, Ressourcen einsetzt und wirtschaftlich arbeitet.</p>
+            <ul id="stageList">
+              <li>Kundensegmente und Wertangebote klären</li>
+              <li>Aktivitäten, Ressourcen und Partner sichtbar machen</li>
+              <li>Einnahmen und Kosten als Logik verstehen</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="7" data-note="Eigene Schwerpunktsetzung: KI nicht als Selbstzweck, sondern pro Canvas-Baustein erklären.">
+      <div class="slide-inner">
+        <div>
+          <div class="eyebrow">Eigene Schwerpunktsetzung</div>
+          <h2>KI verändert nicht nur Tools, sondern Bausteine des Geschäftsmodells.</h2>
+        </div>
+
+        <div class="grid3">
+          <div class="mini-card">
+            <div class="big">🎨</div>
+            <h3>Wertangebot</h3>
+            <p>Schnellere Varianten, bessere Visualisierung, klima- und nutzungsbezogene Analysen.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">⚙️</div>
+            <h3>Aktivitäten</h3>
+            <p>Automatisierung von Recherche, Bildauswertung, Mengenermittlung und Entwurfsiteration.</p>
+          </div>
+
+          <div class="mini-card">
+            <div class="big">🧠</div>
+            <h3>Ressourcen</h3>
+            <p>Daten, Software, Prompt-Kompetenz und digitale Workflows werden zu strategischen Ressourcen.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="8" data-note="Abschluss: Brücke zur späteren Aufgabe bauen: Ist-BMC, Strategie-BMC, Projekt-BMC.">
+      <div class="slide-inner split">
+        <div>
+          <div class="eyebrow">Ausblick</div>
+          <h2>Vom Ist-BMC zur Strategie.</h2>
+          <p style="margin-top:18px">Im weiteren Verlauf kann das BMC genutzt werden, um zuerst das bestehende Geschäftsmodell des Planungsbüros zu erfassen und anschließend Strategie- und Projekt-BMC abzuleiten. Dabei werden auch konkrete digitale Hebel sichtbar, statt Digitalisierung nur allgemein zu benennen.</p>
+        </div>
+
+        <div class="hero-card">
+          <h3>Mögliche Leitfragen</h3>
+          <p>Welche Kundensegmente profitieren von digitalen Leistungen? Welche Prozesse werden durch KI effizienter? Welche neuen Ressourcen und Partner werden notwendig?</p>
+          <ul style="margin:14px 0 0;padding-left:20px;font-size:17px;line-height:1.45;color:#34423b">
+            <li>Digitale Bauakte, mobile Datenerfassung, eBeschaffung und eRechnung</li>
+            <li>BIM, GIS, Drohnen, 3D-Visualisierung und KI-gestützte Variantenprüfung</li>
+            <li>Chancen und Grenzen gemeinsam denken: Effizienz, Schulung, Pflege und Datenqualität</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-slide="9" data-note="Abschlussfolie: kurz bedanken und zur Fragerunde überleiten.">
+      <div class="slide-inner" style="justify-content:center;text-align:center;align-items:center">
+        <div class="eyebrow">Abschluss</div>
+        <h2 style="max-width:900px">Vielen Dank für Ihre Aufmerksamkeit.</h2>
+        <p class="muted" style="margin-top:18px;max-width:760px">Wir freuen uns auf eure Fragen und euer Feedback.</p>
+        <div class="handout-qr centered">
+          <a class="handout-link" href="../generated_appendix/Theoriebasierte_Exploration_BMC_from_tex.pdf" target="_blank" rel="noopener" aria-label="Handout als PDF öffnen">PDF</a>
+          <div>
+            <strong>Handout</strong>
+            <span>Hier könnt ihr das passende Theorie-Handout öffnen.</span>
+          </div>
+        </div>
+        <div class="presenters" aria-label="Vortragende" style="margin-top:34px;text-align:left">
+          <div class="presenters-label">Vortragende</div>
+          <div class="presenters-names">
+            <span>Frederik Wessing</span>
+            <span>Paul Müller</span>
+            <span>Joe Martens</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="controls">
+    <button class="secondary" id="prev">←</button>
+    <span class="counter" id="counter">1 / 10</span>
+    <button class="secondary" id="exportPdf" type="button">PDF</button>
+    <button id="next">→</button>
+  </nav>
+
+  <div class="speaker-note" id="note">Taste N: Notiz anzeigen</div>
+
+  <script>
+    const slides = [...document.querySelectorAll('.slide')];
+    const initialIndex = Number(window.location.hash.replace('#',''));
+    let index = Number.isInteger(initialIndex) && initialIndex >= 0 && initialIndex < slides.length ? initialIndex : 0;
+    let showNotes = false;
+
+    const counter = document.getElementById('counter');
+    const note = document.getElementById('note');
+
+    function update(){
+      slides.forEach((s,i)=>s.classList.toggle('active',i===index));
+      counter.textContent = `${index+1} / ${slides.length}`;
+      note.textContent = showNotes ? slides[index].dataset.note : 'Taste N: Notiz anzeigen';
+      closeBubble();
+    }
+
+    document.getElementById('next').onclick = () => {
+      index = Math.min(slides.length-1,index+1);
+      update();
+    };
+
+    document.getElementById('prev').onclick = () => {
+      index = Math.max(0,index-1);
+      update();
+    };
+
+    document.getElementById('exportPdf')?.addEventListener('click', () => {
+      window.print();
+    });
+
+    window.addEventListener('keydown', e => {
+      if(e.key === 'ArrowRight' || e.key === ' '){
+        index = Math.min(slides.length-1,index+1);
+        update();
+      }
+
+      if(e.key === 'ArrowLeft'){
+        index = Math.max(0,index-1);
+        update();
+      }
+
+      if(e.key.toLowerCase() === 'n'){
+        showNotes = !showNotes;
+        update();
+      }
+
+      if(e.key === 'Escape'){
+        closeBubble();
+      }
+    });
+
+    const data = {
+      partners:{
+        icon:'🤝',
+        title:'Schlüsselpartner',
+        text:'Partner erweitern die eigene Leistungsfähigkeit eines Planungsbüros und sichern fachliche Qualität.',
+        list:[
+          'Fachplaner für Verkehr, Wasser, Ökologie und Tragwerk',
+          'Behörden, Auftraggeber und Gutachter',
+          'Softwareanbieter und ausführende GaLaBau-Betriebe'
+        ]
+      },
+      activities:{
+        icon:'🛠️',
+        title:'Schlüsselaktivitäten',
+        text:'Hier liegen die zentralen Tätigkeiten, mit denen das Büro seinen Kundennutzen erzeugt.',
+        list:[
+          'Analyse von Ort, Nutzung, Klima und Bestand',
+          'Entwurf, Visualisierung, Ausschreibung und Projektkommunikation',
+          'Wettbewerbe, Abstimmungen und Qualitätssicherung'
+        ]
+      },
+      resources:{
+        icon:'💻',
+        title:'Schlüsselressourcen',
+        text:'Neben Kreativität und Fachwissen werden digitale Ressourcen immer wichtiger.',
+        list:[
+          'Fachwissen in Landschaftsarchitektur und Planung',
+          'CAD, BIM, GIS, Rendering und KI-Werkzeuge',
+          'Referenzen, Daten, Netzwerke und Teamkompetenz'
+        ]
+      },
+      value:{
+        icon:'🌿',
+        title:'Wertangebote',
+        text:'Das Wertangebot beschreibt, welches Problem für Kundinnen und Kunden gelöst wird.',
+        list:[
+          'Gestalterisch hochwertige Freiräume',
+          'Klimaanpassung, Regenwassermanagement und Nachhaltigkeit',
+          'Überzeugende Kommunikation durch Pläne, Modelle und Visualisierungen'
+        ]
+      },
+      relationships:{
+        icon:'💬',
+        title:'Kundenbeziehungen',
+        text:'Planungsleistungen entstehen oft in enger Abstimmung mit Auftraggebern und Öffentlichkeit.',
+        list:[
+          'Beratung und regelmäßige Abstimmung',
+          'Bürgerbeteiligung und Workshops',
+          'Transparente Dokumentation des Planungsprozesses'
+        ]
+      },
+      channels:{
+        icon:'📡',
+        title:'Kanäle',
+        text:'Kanäle beschreiben, wie das Büro sichtbar wird und Leistungen zu Auftraggebern gelangen.',
+        list:[
+          'Website, Portfolio und Social Media',
+          'Wettbewerbe, Ausschreibungen und Vergabeplattformen',
+          'Netzwerke, Empfehlungen und Fachöffentlichkeit'
+        ]
+      },
+      segments:{
+        icon:'🏛️',
+        title:'Kundensegmente',
+        text:'Kundensegmente sind die Gruppen, für die das Büro Wert schafft.',
+        list:[
+          'Kommunen und öffentliche Auftraggeber',
+          'Private Bauherren und Projektentwickler',
+          'Institutionen, Wettbewerbsgeber und Unternehmen'
+        ]
+      },
+      costs:{
+        icon:'📉',
+        title:'Kostenstruktur',
+        text:'Die Kostenstruktur zeigt, wofür das Geschäftsmodell Ressourcen verbraucht.',
+        list:[
+          'Personal- und Bürokosten',
+          'Software, Hardware, Daten und Weiterbildung',
+          'Akquise, Wettbewerbe und Kommunikation'
+        ]
+      },
+      revenue:{
+        icon:'💶',
+        title:'Einnahmequellen',
+        text:'Einnahmequellen zeigen, wie das Büro aus seinen Leistungen wirtschaftlichen Ertrag erzielt.',
+        list:[
+          'Honorare für Planungsleistungen',
+          'Wettbewerbserfolge und Folgeaufträge',
+          'Beratung, Studien, Gutachten und digitale Zusatzleistungen'
+        ]
+      }
+    };
+
+    const canvas = document.getElementById('canvas');
+    const bubble = document.getElementById('bubble');
+    const icon = document.getElementById('bubbleIcon');
+    const title = document.getElementById('bubbleTitle');
+    const text = document.getElementById('bubbleText');
+    const list = document.getElementById('bubbleList');
+
+    document.querySelectorAll('.tile').forEach(tile => {
+      tile.addEventListener('click', () => {
+        const item = data[tile.dataset.key];
+
+        document.querySelectorAll('.tile').forEach(t => t.classList.remove('active-tile'));
+        tile.classList.add('active-tile');
+        canvas.classList.add('dim');
+
+        icon.textContent = item.icon;
+        title.textContent = item.title;
+        text.textContent = item.text;
+        list.innerHTML = item.list.map(x => `<li>${x}</li>`).join('');
+
+        bubble.classList.add('show');
+      });
+    });
+
+    function closeBubble(){
+      if(!bubble) return;
+      bubble.classList.remove('show');
+      canvas?.classList.remove('dim');
+      document.querySelectorAll('.tile').forEach(t => t.classList.remove('active-tile'));
+    }
+
+    document.getElementById('close').onclick = closeBubble;
+
+    const nodePositions = {
+      value:{x:50,y:48},
+      segments:{x:82,y:20},
+      relationships:{x:84,y:48},
+      channels:{x:72,y:68},
+      revenue:{x:50,y:74},
+      costs:{x:28,y:68},
+      partners:{x:16,y:48},
+      activities:{x:18,y:20},
+      resources:{x:50,y:13}
+    };
+
+    const dependencyData = {
+      value:{
+        title:'Wertangebote als Zentrum',
+        text:'Das Wertangebot entsteht aus Kundenbedarf und Ressourcen. Verändert es sich, sendet es Anforderungen an Aktivitäten, Kundenbeziehung und Erlöslogik weiter.',
+        aspects:['Bedarf','Nutzen','Datenbasis','Zusatzleistung'],
+        direct:[
+          {from:'segments', to:'value', aspect:'Bedarf'},
+          {from:'value', to:'segments', aspect:'Nutzen'},
+          {from:'resources', to:'value', aspect:'Datenbasis'},
+          {from:'value', to:'activities', aspect:'Anforderung'},
+          {from:'value', to:'relationships', aspect:'Erklärbedarf'},
+          {from:'value', to:'revenue', aspect:'Zusatzleistung'}
+        ],
+        secondary:[
+          {from:'activities', to:'costs', aspect:'Aufwand'},
+          {from:'resources', to:'costs', aspect:'Schulung'},
+          {from:'relationships', to:'channels', aspect:'Kommunikation'}
+        ]
+      },
+      segments:{
+        title:'Kundensegmente verändern Erwartungen',
+        text:'Kundensegmente senden Bedarf, Erwartungen und Zahlungsbereitschaft in das Modell. Gleichzeitig fließen Nutzen und Reichweite zu ihnen zurück.',
+        aspects:['Bedarf','Kanalwahl','Betreuung','Zahlungsbereitschaft'],
+        direct:[
+          {from:'segments', to:'value', aspect:'Bedarf'},
+          {from:'value', to:'segments', aspect:'Nutzen'},
+          {from:'segments', to:'channels', aspect:'Kanalwahl'},
+          {from:'channels', to:'segments', aspect:'Reichweite'},
+          {from:'segments', to:'relationships', aspect:'Betreuung'},
+          {from:'segments', to:'revenue', aspect:'Zahlungsbereitschaft'}
+        ],
+        secondary:[
+          {from:'relationships', to:'value', aspect:'Feedback'},
+          {from:'channels', to:'costs', aspect:'Akquise'}
+        ]
+      },
+      relationships:{
+        title:'Kundenbeziehungen brauchen Transparenz',
+        text:'Kundenbeziehungen nehmen Erwartungen auf und geben Bindung, Vertrauen und Folgeaufträge zurück. Sie erzeugen aber auch Abstimmungsarbeit.',
+        aspects:['Erwartung','Bindung','Vertrauen','Abstimmung'],
+        direct:[
+          {from:'segments', to:'relationships', aspect:'Erwartung'},
+          {from:'relationships', to:'segments', aspect:'Bindung'},
+          {from:'channels', to:'relationships', aspect:'Kontakt'},
+          {from:'relationships', to:'activities', aspect:'Abstimmung'},
+          {from:'relationships', to:'value', aspect:'Vertrauen'},
+          {from:'relationships', to:'revenue', aspect:'Folgeauftrag'}
+        ],
+        secondary:[
+          {from:'activities', to:'costs', aspect:'Zeitaufwand'},
+          {from:'value', to:'channels', aspect:'Darstellung'}
+        ]
+      },
+      channels:{
+        title:'Kanäle erzeugen Sichtbarkeit',
+        text:'Kanäle transportieren das Wertangebot zu Kundensegmenten und eröffnen Kontakt. Umgekehrt bestimmen Zielgruppen und Wertangebot, welche Kanäle passen.',
+        aspects:['Reichweite','Inhalte','Kontakt','Akquise'],
+        direct:[
+          {from:'segments', to:'channels', aspect:'Kanalwahl'},
+          {from:'value', to:'channels', aspect:'Inhalte'},
+          {from:'channels', to:'segments', aspect:'Reichweite'},
+          {from:'channels', to:'relationships', aspect:'Kontakt'},
+          {from:'channels', to:'costs', aspect:'Akquise'}
+        ],
+        secondary:[
+          {from:'relationships', to:'revenue', aspect:'Bindung'},
+          {from:'channels', to:'value', aspect:'Rückmeldung'}
+        ]
+      },
+      revenue:{
+        title:'Einnahmen hängen am Nutzen',
+        text:'Einnahmequellen entstehen aus Nutzen und Zahlungsbereitschaft. Sie setzen zugleich Grenzen und Spielräume für Kosten, Ressourcen und strategische Prioritäten.',
+        aspects:['Zahlungsgrund','Zahlungsbereitschaft','Marge','Spielraum'],
+        direct:[
+          {from:'value', to:'revenue', aspect:'Zahlungsgrund'},
+          {from:'segments', to:'revenue', aspect:'Zahlungsbereitschaft'},
+          {from:'costs', to:'revenue', aspect:'Preisgrenze'},
+          {from:'revenue', to:'costs', aspect:'Kostenspielraum'},
+          {from:'revenue', to:'resources', aspect:'Investition'},
+          {from:'revenue', to:'value', aspect:'Priorisierung'}
+        ],
+        secondary:[
+          {from:'resources', to:'activities', aspect:'Kompetenz'},
+          {from:'value', to:'segments', aspect:'Nutzen'}
+        ]
+      },
+      costs:{
+        title:'Kosten zeigen die Konsequenz',
+        text:'Kosten werden vor allem durch Ressourcen, Aktivitäten und Partner ausgelöst. Gleichzeitig begrenzen sie, welche Leistungen wirtschaftlich tragfähig bleiben.',
+        aspects:['Software/Daten','Arbeitszeit','Fremdleistung','Marge'],
+        direct:[
+          {from:'resources', to:'costs', aspect:'Software/Daten'},
+          {from:'activities', to:'costs', aspect:'Arbeitszeit'},
+          {from:'partners', to:'costs', aspect:'Fremdleistung'},
+          {from:'costs', to:'revenue', aspect:'Marge'},
+          {from:'costs', to:'value', aspect:'Leistungsgrenze'}
+        ],
+        secondary:[
+          {from:'value', to:'segments', aspect:'Nutzen'},
+          {from:'costs', to:'resources', aspect:'Priorisierung'}
+        ]
+      },
+      partners:{
+        title:'Partner erweitern Fähigkeiten',
+        text:'Partner bringen Know-how, Daten, Schnittstellen oder Zuarbeit in das Geschäftsmodell. Dafür entstehen Koordinations- und Fremdleistungskosten.',
+        aspects:['Know-how','Zuarbeit','Leistungstiefe','Fremdleistung'],
+        direct:[
+          {from:'partners', to:'resources', aspect:'Know-how'},
+          {from:'partners', to:'activities', aspect:'Zuarbeit'},
+          {from:'partners', to:'value', aspect:'Leistungstiefe'},
+          {from:'partners', to:'costs', aspect:'Fremdleistung'},
+          {from:'activities', to:'partners', aspect:'Koordination'}
+        ],
+        secondary:[
+          {from:'resources', to:'value', aspect:'Datenbasis'},
+          {from:'value', to:'revenue', aspect:'Zusatzleistung'}
+        ]
+      },
+      activities:{
+        title:'Aktivitäten übersetzen Strategie in Arbeit',
+        text:'Aktivitäten verarbeiten Ressourcen und Partnerleistungen zu Ergebnissen. Sie speisen das Wertangebot, verursachen Aufwand und prägen die Kundenabstimmung.',
+        aspects:['Werkzeuge','Zuarbeit','Ergebnis','Aufwand'],
+        direct:[
+          {from:'resources', to:'activities', aspect:'Werkzeuge'},
+          {from:'partners', to:'activities', aspect:'Zuarbeit'},
+          {from:'activities', to:'value', aspect:'Ergebnis'},
+          {from:'activities', to:'costs', aspect:'Aufwand'},
+          {from:'activities', to:'relationships', aspect:'Abstimmung'}
+        ],
+        secondary:[
+          {from:'value', to:'revenue', aspect:'Zusatzleistung'},
+          {from:'costs', to:'revenue', aspect:'Marge'}
+        ]
+      },
+      resources:{
+        title:'Ressourcen machen Veränderung möglich',
+        text:'Ressourcen wie Daten, Software und Kompetenz fließen in Aktivitäten und Wertangebote. Partner können sie ergänzen, Kosten machen sie wirtschaftlich relevant.',
+        aspects:['Know-how','Werkzeuge','Leistungsfähigkeit','Investition'],
+        direct:[
+          {from:'partners', to:'resources', aspect:'Know-how'},
+          {from:'resources', to:'activities', aspect:'Werkzeuge'},
+          {from:'resources', to:'value', aspect:'Leistungsfähigkeit'},
+          {from:'resources', to:'costs', aspect:'Investition'},
+          {from:'resources', to:'revenue', aspect:'Spezialleistung'}
+        ],
+        secondary:[
+          {from:'activities', to:'value', aspect:'Ergebnis'},
+          {from:'costs', to:'revenue', aspect:'Marge'}
+        ]
+      }
+    };
+
+    const linkLayer = document.getElementById('linkLayer');
+    const dependencyMap = document.getElementById('dependencyMap');
+    const networkTitle = document.getElementById('networkTitle');
+    const networkText = document.getElementById('networkText');
+    const networkAspects = document.getElementById('networkAspects');
+    let activeNetworkKey = 'value';
+    let draggedNode = null;
+    let dragMoved = false;
+
+    function renderDependencyNetwork(activeKey = 'value'){
+      if(!linkLayer || !dependencyMap) return;
+      activeNetworkKey = activeKey;
+      const item = dependencyData[activeKey];
+      const directLinks = item.direct || [];
+      const secondaryLinks = item.secondary || [];
+      const directNodes = new Set(directLinks.flatMap(link => [link.from, link.to]));
+      const secondaryNodes = new Set(secondaryLinks.flatMap(link => [link.from, link.to]));
+
+      linkLayer.innerHTML = '';
+      dependencyMap.querySelectorAll('.stream-tag').forEach(tag => tag.remove());
+      document.querySelectorAll('.node-bubble').forEach(node => {
+        const key = node.dataset.node;
+        node.classList.toggle('active-node', key === activeKey);
+        node.classList.toggle('related-node', key !== activeKey && directNodes.has(key));
+        node.classList.toggle('secondary-node', key !== activeKey && !directNodes.has(key) && secondaryNodes.has(key));
+      });
+
+      networkTitle.textContent = item.title;
+      networkText.textContent = item.text;
+      networkAspects.innerHTML = item.aspects.map(aspect => `<span class="aspect-chip">${aspect}</span>`).join('');
+
+      function renderEdge(link, i, secondary = false){
+        const sourcePosition = nodePositions[link.from];
+        const targetPosition = nodePositions[link.to];
+        const dx = targetPosition.x - sourcePosition.x;
+        const dy = targetPosition.y - sourcePosition.y;
+        const length = Math.hypot(dx, dy) || 1;
+        const startPad = secondary ? 4.2 : 5.2;
+        const endPad = secondary ? 5.8 : 7.2;
+        const x1 = sourcePosition.x + (dx / length) * startPad;
+        const y1 = sourcePosition.y + (dy / length) * startPad;
+        const x2 = targetPosition.x - (dx / length) * endPad;
+        const y2 = targetPosition.y - (dy / length) * endPad;
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1', x1);
+        line.setAttribute('y1', y1);
+        line.setAttribute('x2', x2);
+        line.setAttribute('y2', y2);
+        line.setAttribute('class', `link-line ${secondary ? 'secondary-link' : 'active-link'}`);
+        line.style.animationDelay = `${i * (secondary ? -.32 : -.18)}s`;
+        linkLayer.appendChild(line);
+
+        const arrowSize = secondary ? .75 : 1.05;
+        const arrowSpread = secondary ? .42 : .58;
+        const ux = dx / length;
+        const uy = dy / length;
+        const px = -uy;
+        const py = ux;
+        const baseX = x2 - ux * arrowSize;
+        const baseY = y2 - uy * arrowSize;
+        const arrow = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+        arrow.setAttribute('points', [
+          `${x2},${y2}`,
+          `${baseX + px * arrowSpread},${baseY + py * arrowSpread}`,
+          `${baseX - px * arrowSpread},${baseY - py * arrowSpread}`
+        ].join(' '));
+        arrow.setAttribute('class', `edge-arrow${secondary ? ' secondary-arrow' : ''}`);
+        linkLayer.appendChild(arrow);
+
+        const tag = document.createElement('span');
+        tag.className = `stream-tag active-stream${secondary ? ' secondary-stream' : ''}`;
+        tag.textContent = link.aspect;
+        tag.style.setProperty('--sx', `${sourcePosition.x}%`);
+        tag.style.setProperty('--sy', `${sourcePosition.y}%`);
+        tag.style.setProperty('--tx', `${targetPosition.x}%`);
+        tag.style.setProperty('--ty', `${targetPosition.y}%`);
+        tag.style.setProperty('--tag-delay', `${secondary ? .5 + i * .55 : i * .22}s`);
+        dependencyMap.appendChild(tag);
+      }
+
+      secondaryLinks.forEach((link, i) => renderEdge(link, i, true));
+      directLinks.forEach((link, i) => renderEdge(link, i));
+    }
+
+    document.querySelectorAll('.node-bubble').forEach(node => {
+      node.addEventListener('pointerdown', event => {
+        draggedNode = node;
+        dragMoved = false;
+        node.classList.add('dragging-node');
+        node.setPointerCapture(event.pointerId);
+      });
+
+      node.addEventListener('pointermove', event => {
+        if(draggedNode !== node) return;
+        const rect = dependencyMap.getBoundingClientRect();
+        const x = Math.max(7, Math.min(93, ((event.clientX - rect.left) / rect.width) * 100));
+        const y = Math.max(8, Math.min(72, ((event.clientY - rect.top) / rect.height) * 100));
+
+        dragMoved = true;
+        nodePositions[node.dataset.node] = {x,y};
+        node.style.setProperty('--x', `${x}%`);
+        node.style.setProperty('--y', `${y}%`);
+        renderDependencyNetwork(activeNetworkKey);
+        node.classList.add('dragging-node');
+      });
+
+      node.addEventListener('pointerup', event => {
+        node.releasePointerCapture(event.pointerId);
+        node.classList.remove('dragging-node');
+        draggedNode = null;
+      });
+
+      node.addEventListener('click', event => {
+        if(dragMoved){
+          event.preventDefault();
+          dragMoved = false;
+          return;
+        }
+        renderDependencyNetwork(node.dataset.node);
+      });
+    });
+
+    renderDependencyNetwork();
+
+    const disruptionData = [
+      {
+        icon:'🛠️',
+        title:'Toolwirkung',
+        text:'Ein digitales Werkzeug verbessert eine einzelne Tätigkeit, ohne die Logik des Unternehmens grundsätzlich zu verändern.',
+        outputTitle:'Betroffene Bausteine',
+        outputText:'Zunächst leuchten vor allem Schlüsselaktivitäten und Schlüsselressourcen: Das Büro arbeitet effizienter, bietet aber noch kein anderes Geschäftsmodell an.',
+        active:['activities','resources'],
+        list:[
+          'Beispiel: KI hilft bei Recherche oder Bildvarianten.',
+          'Effizienz steigt, aber Kundennutzen und Erlöslogik bleiben ähnlich.'
+        ]
+      },
+      {
+        icon:'🔁',
+        title:'Prozesswirkung',
+        text:'Digitalisierung verändert mehrere Abläufe: Daten, Schnittstellen, Abstimmung und Qualitätssicherung werden wichtiger.',
+        outputTitle:'Mehrere Bausteine geraten in Bewegung',
+        outputText:'Jetzt sind Aktivitäten, Ressourcen, Kosten und Kundenbeziehungen betroffen. Genau hier beginnt die organisatorische Fragestellung.',
+        active:['activities','resources','relationships','costs'],
+        list:[
+          'Beispiel: digitale Bauakte, BIM/GIS oder transparente Projektkommunikation.',
+          'Neben Effizienz entstehen Schulungs-, Daten- und Abstimmungskosten.'
+        ]
+      },
+      {
+        icon:'🌐',
+        title:'Geschäftsmodellwirkung',
+        text:'Disruptiv wird es erst, wenn neue Kundenerwartungen, neue Wertangebote, Kostenstrukturen und Einnahmequellen zusammenhängen.',
+        outputTitle:'Das Geschäftsmodell wird neu ausgerichtet',
+        outputText:'Dann reicht Tool-Einführung nicht mehr. Das Unternehmen muss prüfen, welchen Nutzen es anbietet, wem es dient und wie es wirtschaftlich tragfähig bleibt.',
+        active:['activities','resources','relationships','costs','value','revenue'],
+        list:[
+          'Beispiel: datenbasierte Analyse, digitale Beteiligung oder KI-gestützte Variantenprüfung als bezahlbare Zusatzleistung.',
+          'Chance und Risiko werden gleichzeitig sichtbar: neuer Nutzen, aber auch Kompetenzbedarf und Investitionen.'
+        ]
+      }
+    ];
+
+    const disruptionRange = document.getElementById('disruptionRange');
+    const disruptionFill = document.getElementById('disruptionFill');
+    const disruptionIcon = document.getElementById('disruptionIcon');
+    const disruptionTitle = document.getElementById('disruptionTitle');
+    const disruptionText = document.getElementById('disruptionText');
+    const disruptionOutputTitle = document.getElementById('disruptionOutputTitle');
+    const disruptionOutputText = document.getElementById('disruptionOutputText');
+    const disruptionList = document.getElementById('disruptionList');
+
+    function renderDisruption(value = 0){
+      if(!disruptionRange) return;
+      const item = disruptionData[Number(value)];
+      disruptionFill.style.width = `${33 + Number(value) * 33.5}%`;
+      disruptionIcon.textContent = item.icon;
+      disruptionTitle.textContent = item.title;
+      disruptionText.textContent = item.text;
+      disruptionOutputTitle.textContent = item.outputTitle;
+      disruptionOutputText.textContent = item.outputText;
+      disruptionList.innerHTML = item.list.map(x => `<li>${x}</li>`).join('');
+      document.querySelectorAll('.impact-node').forEach(node => {
+        node.classList.toggle('active-impact', item.active.includes(node.dataset.impactNode));
+      });
+    }
+
+    disruptionRange?.addEventListener('input', event => renderDisruption(event.target.value));
+    renderDisruption();
+
+    const impactData = {
+      today:{
+        leftTitle:'Typische Arbeitslogik',
+        left:[
+          'Ort, Nutzung und Bestand werden fachlich analysiert.',
+          'Entwurf, Ausschreibung und Abstimmung sind stark projektbezogen.',
+          'Kommunikation läuft über Pläne, Termine, Mails und Besprechungen.'
+        ],
+        rightTitle:'BMC-Wirkung',
+        right:[
+          'Wertangebot: gestalterisch und fachlich überzeugende Freiräume.',
+          'Ressourcen: Fachwissen, Referenzen, Software und Teamkompetenz.',
+          'Kosten: Personal, Bürobetrieb, Software, Akquise und Wettbewerbe.'
+        ]
+      },
+      future:{
+        leftTitle:'Digitale Arbeitslogik',
+        left:[
+          'KI unterstützt Recherche, Varianten, Bildauswertung und Mengenermittlung.',
+          'BIM, GIS, Drohnen, Cloud und digitale Bauakten verbinden mehr Projektdaten.',
+          'Digitale Beteiligung und Visualisierung machen Entscheidungen nachvollziehbarer.',
+          'Eigene KI-/Webtools senken Fremdsoftwarebedarf, brauchen aber Pflege, Verwaltung und klare Zuständigkeiten.'
+        ],
+        rightTitle:'BMC-Wirkung',
+        right:[
+          'Wertangebot: datenbasierte Analyse, schnellere Varianten und bessere Kommunikation.',
+          'Ressourcen: Datenqualität, Schnittstellen, Prompt-Kompetenz und Softwareökosystem.',
+          'Kosten: Investitionen, Schulung, Wartung und Verantwortung für digitale Qualität.'
+        ]
+      }
+    };
+
+    const impactLeftTitle = document.getElementById('impactLeftTitle');
+    const impactRightTitle = document.getElementById('impactRightTitle');
+    const impactLeftList = document.getElementById('impactLeftList');
+    const impactRightList = document.getElementById('impactRightList');
+
+    document.querySelectorAll('.switch-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = impactData[button.dataset.impact];
+        document.querySelectorAll('.switch-button').forEach(b => b.classList.remove('active-switch'));
+        button.classList.add('active-switch');
+        impactLeftTitle.textContent = item.leftTitle;
+        impactRightTitle.textContent = item.rightTitle;
+        impactLeftList.innerHTML = item.left.map(x => `<li>${x}</li>`).join('');
+        impactRightList.innerHTML = item.right.map(x => `<li>${x}</li>`).join('');
+      });
+    });
+
+    document.querySelectorAll('.example-tab').forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.example;
+        document.querySelectorAll('.example-tab').forEach(tab => tab.classList.remove('active-example'));
+        button.classList.add('active-example');
+        document.querySelectorAll('[data-example-frame]').forEach(frame => {
+          frame.classList.toggle('active-example-frame', frame.dataset.exampleFrame === target);
+        });
+        const viewer = document.querySelector('.viewer-embed');
+        if(target === 'web3d' && viewer && !viewer.getAttribute('src')){
+          viewer.src = viewer.dataset.src;
+        }
+      });
+    });
+
+    const stageData = [
+      {
+        number:'1',
+        title:'Ist-BMC erfassen',
+        text:'Zuerst wird beschrieben, wie das untersuchte Unternehmen heute Wert schafft, Kunden erreicht, Ressourcen einsetzt und wirtschaftlich arbeitet.',
+        list:[
+          'Kundensegmente und Wertangebote klären',
+          'Aktivitäten, Ressourcen und Partner sichtbar machen',
+          'Einnahmen und Kosten als Logik verstehen'
+        ]
+      },
+      {
+        number:'2',
+        title:'Digitale Potenziale erkennen',
+        text:'Danach wird geprüft, welche Technologien die Bausteine verändern können und wo echte Chancen oder Risiken liegen.',
+        list:[
+          'BIM, GIS, Cloud, Drohnen und KI einordnen',
+          'Betroffene Bausteine markieren',
+          'Kosten, Kompetenzbedarf und Datenqualität mitdenken'
+        ]
+      },
+      {
+        number:'3',
+        title:'Strategie-BMC entwickeln',
+        text:'Aus den Erkenntnissen entsteht ein zukünftiges Geschäftsmodell, das digitale Leistungen nicht isoliert, sondern als Gesamtlogik betrachtet.',
+        list:[
+          'Neuen Kundennutzen formulieren',
+          'Ressourcen und Partner gezielt erweitern',
+          'Wirtschaftliche Wirkung plausibel prüfen'
+        ]
+      },
+      {
+        number:'4',
+        title:'Projekt-BMC ableiten',
+        text:'Am Ende wird aus der Strategie ein konkretes Projekt, das umsetzbar, begründet und für das Unternehmen anschlussfähig ist.',
+        list:[
+          'Projektziel und Nutzen festlegen',
+          'Aufgaben, Ressourcen und Zuständigkeiten ableiten',
+          'Erfolgskriterien für die Umsetzung definieren'
+        ]
+      }
+    ];
+
+    const stageNumber = document.getElementById('stageNumber');
+    const stageTitle = document.getElementById('stageTitle');
+    const stageText = document.getElementById('stageText');
+    const stageList = document.getElementById('stageList');
+
+    document.querySelectorAll('.stage-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const item = stageData[Number(button.dataset.stage)];
+        document.querySelectorAll('.stage-button').forEach(b => b.classList.remove('active-stage'));
+        button.classList.add('active-stage');
+        stageNumber.textContent = item.number;
+        stageTitle.textContent = item.title;
+        stageText.textContent = item.text;
+        stageList.innerHTML = item.list.map(x => `<li>${x}</li>`).join('');
+      });
+    });
+
+    update();
+  </script>
+</body>
+</html>

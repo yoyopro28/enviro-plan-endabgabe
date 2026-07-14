@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KI-Iteration Entwurfsplanung</title>
+  <style>
+    :root{
+      --green:#2f6b4f;
+      --green-soft:#eaf4ee;
+      --ink:#1f2a25;
+      --muted:#69756f;
+      --line:#d8e2dc;
+      --paper:#f7faf8;
+      --white:#fff;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      background:
+        radial-gradient(circle at 12% 10%, rgba(95,143,107,.22), transparent 32%),
+        radial-gradient(circle at 88% 78%, rgba(47,107,79,.18), transparent 34%),
+        var(--paper);
+      color:var(--ink);
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      overflow:hidden;
+    }
+
+    .iteration-demo{
+      width:min(1180px,96vw);
+      height:min(690px,92vh);
+      display:grid;
+      grid-template-columns:1fr 310px;
+      gap:18px;
+      padding:18px;
+    }
+
+    .stage{
+      position:relative;
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:28px;
+      background:rgba(255,255,255,.74);
+      box-shadow:0 24px 70px rgba(22,38,29,.18);
+      overflow:hidden;
+      min-height:0;
+    }
+
+    .stage::before{
+      content:"";
+      position:absolute;
+      inset:22px;
+      border:1px dashed rgba(47,107,79,.18);
+      border-radius:22px;
+      pointer-events:none;
+    }
+
+    .main-frame{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:min(620px,70%);
+      aspect-ratio:4/3;
+      border-radius:22px;
+      border:1px solid rgba(216,226,220,.95);
+      background:#fff;
+      box-shadow:0 22px 54px rgba(32,49,39,.22);
+      overflow:hidden;
+      z-index:3;
+    }
+
+    .main-frame img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      opacity:0;
+      transform:scale(1.045);
+      filter:blur(6px) saturate(.92);
+      transition:opacity .82s ease, transform 1.25s ease, filter .82s ease;
+    }
+
+    .main-frame img.visible{
+      opacity:1;
+      transform:scale(1);
+      filter:blur(0) saturate(1);
+      z-index:2;
+    }
+
+    .main-frame img.leaving{
+      opacity:.24;
+      transform:scale(.985);
+      filter:blur(4px) saturate(.9);
+      z-index:1;
+    }
+
+    .prompt-chip,
+    .output-chip{
+      position:absolute;
+      z-index:6;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 13px;
+      border-radius:999px;
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      color:var(--green);
+      font-weight:850;
+      font-size:13px;
+      box-shadow:0 12px 28px rgba(32,49,39,.12);
+    }
+
+    .prompt-chip{left:34px;top:34px}
+    .output-chip{right:34px;bottom:34px}
+
+    .wheel-hint{
+      position:absolute;
+      left:34px;
+      bottom:34px;
+      z-index:6;
+      padding:10px 13px;
+      border-radius:999px;
+      background:rgba(255,255,255,.88);
+      border:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      font-weight:850;
+      box-shadow:0 12px 28px rgba(32,49,39,.1);
+    }
+
+    .flow-line{
+      position:absolute;
+      left:100px;
+      top:61px;
+      width:52%;
+      height:2px;
+      background:linear-gradient(90deg, transparent, rgba(47,107,79,.55), transparent);
+      z-index:2;
+      transform-origin:left center;
+      animation:pulseLine 3.2s ease-in-out infinite;
+    }
+
+    .variant-card{
+      position:absolute;
+      width:142px;
+      aspect-ratio:4/3;
+      border-radius:16px;
+      border:1px solid rgba(216,226,220,.95);
+      background:#fff;
+      overflow:hidden;
+      box-shadow:0 14px 34px rgba(32,49,39,.14);
+      opacity:.42;
+      transform:translate(-50%,-50%) scale(.92);
+      transition:.5s ease;
+      z-index:2;
+    }
+
+    .variant-card img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .variant-card.active{
+      opacity:1;
+      transform:translate(-50%,-50%) scale(1.04);
+      border-color:rgba(47,107,79,.55);
+      box-shadow:0 18px 42px rgba(47,107,79,.18);
+    }
+
+    .variant-card:nth-of-type(1){left:21%;top:24%;animation:floatA 5.4s ease-in-out infinite}
+    .variant-card:nth-of-type(2){left:80%;top:24%;animation:floatB 5.8s ease-in-out infinite}
+    .variant-card:nth-of-type(3){left:19%;top:77%;animation:floatB 5.3s ease-in-out infinite}
+    .variant-card:nth-of-type(4){left:82%;top:73%;animation:floatA 5.9s ease-in-out infinite}
+
+    .side-panel{
+      border:1px solid rgba(216,226,220,.95);
+      border-radius:28px;
+      background:rgba(255,255,255,.84);
+      box-shadow:0 18px 44px rgba(22,38,29,.13);
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+
+    .eyebrow{
+      color:var(--green);
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+      margin-bottom:10px;
+    }
+
+    h1{
+      font-size:28px;
+      line-height:1.03;
+      margin:0 0 12px;
+      letter-spacing:-.03em;
+    }
+
+    .stage-copy{
+      color:#3d4943;
+      font-size:15px;
+      line-height:1.45;
+      margin:0 0 18px;
+    }
+
+    .timeline{
+      display:flex;
+      flex-direction:column;
+      gap:9px;
+      margin-top:4px;
+    }
+
+    .step{
+      display:grid;
+      grid-template-columns:32px 1fr;
+      gap:9px;
+      align-items:center;
+      padding:9px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#f8fbf9;
+      color:var(--muted);
+      transition:.3s ease;
+    }
+
+    .step.active{
+      background:var(--green);
+      border-color:var(--green);
+      color:#fff;
+      box-shadow:0 12px 28px rgba(47,107,79,.22);
+    }
+
+    .step-number{
+      width:32px;
+      height:32px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:rgba(47,107,79,.1);
+      color:var(--green);
+      font-weight:900;
+      font-size:13px;
+    }
+
+    .step.active .step-number{
+      background:rgba(255,255,255,.2);
+      color:#fff;
+    }
+
+    .step-title{
+      font-size:13px;
+      font-weight:900;
+      line-height:1.2;
+    }
+
+    .progress{
+      margin-top:auto;
+      height:9px;
+      border-radius:999px;
+      background:#e2ebe5;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0;
+      background:linear-gradient(90deg,#86a98e,var(--green));
+      border-radius:999px;
+      transition:width .38s ease;
+    }
+
+    @keyframes pulseLine{
+      0%,100%{opacity:.2;transform:scaleX(.72)}
+      50%{opacity:.75;transform:scaleX(1)}
+    }
+
+    @keyframes floatA{
+      0%,100%{translate:0 0}
+      50%{translate:0 -8px}
+    }
+
+    @keyframes floatB{
+      0%,100%{translate:0 0}
+      50%{translate:0 9px}
+    }
+
+    @media(max-width:900px){
+      body{overflow:auto}
+      .iteration-demo{
+        height:auto;
+        min-height:100vh;
+        grid-template-columns:1fr;
+      }
+      .stage{height:58vh;min-height:430px}
+      .side-panel{min-height:360px}
+      .main-frame{width:74%}
+    }
+
+    body.embedded{
+      background:transparent;
+    }
+
+    body.embedded .iteration-demo{
+      width:100vw;
+      height:100vh;
+      grid-template-columns:minmax(0,1fr) 270px;
+      gap:10px;
+      padding:10px;
+    }
+
+    body.embedded .stage,
+    body.embedded .side-panel{
+      border-radius:18px;
+      box-shadow:none;
+    }
+
+    body.embedded .stage::before{
+      inset:16px;
+      border-radius:15px;
+    }
+
+    body.embedded .main-frame{
+      width:min(470px,68%);
+      border-radius:15px;
+      box-shadow:0 12px 32px rgba(32,49,39,.16);
+    }
+
+    body.embedded .variant-card{
+      width:94px;
+      border-radius:12px;
+      opacity:.3;
+    }
+
+    body.embedded .prompt-chip,
+    body.embedded .output-chip,
+    body.embedded .wheel-hint{
+      font-size:11px;
+      padding:7px 10px;
+    }
+
+    body.embedded .prompt-chip{left:20px;top:20px}
+    body.embedded .output-chip{right:20px;bottom:20px}
+    body.embedded .wheel-hint{left:20px;bottom:20px}
+
+    body.embedded .side-panel{
+      padding:16px;
+      justify-content:center;
+    }
+
+    body.embedded .eyebrow{
+      font-size:10px;
+      margin-bottom:7px;
+    }
+
+    body.embedded h1{
+      font-size:22px;
+      margin-bottom:9px;
+    }
+
+    body.embedded .stage-copy{
+      font-size:13px;
+      line-height:1.35;
+      margin-bottom:0;
+    }
+
+    body.embedded .timeline,
+    body.embedded .progress{
+      display:none;
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *, *::before, *::after{
+        animation-duration:.01ms!important;
+        animation-iteration-count:1!important;
+        transition-duration:.01ms!important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="iteration-demo" aria-label="Animation: KI-gestützte schnelle Entwurfsiteration">
+    <div class="stage">
+      <div class="prompt-chip">✦ Prompt + Skizze</div>
+      <div class="flow-line"></div>
+
+      <div class="variant-card"><img id="variantA" alt="" /></div>
+      <div class="variant-card"><img id="variantB" alt="" /></div>
+      <div class="variant-card"><img id="variantC" alt="" /></div>
+      <div class="variant-card"><img id="variantD" alt="" /></div>
+
+      <div class="main-frame" id="mainFrame"></div>
+      <div class="wheel-hint">Mausrad: Varianten durchlaufen</div>
+      <div class="output-chip">Varianten in Minuten</div>
+    </div>
+
+    <aside class="side-panel">
+      <div class="eyebrow">Digitale Arbeitslogik</div>
+      <h1 id="stageTitle">Von der Skizze zur Variantenfamilie</h1>
+      <p class="stage-copy" id="stageCopy">KI beschleunigt frühe Entwurfsphasen: Aus einer groben Idee entstehen schnell mehrere räumliche Lesarten, die verglichen und weiterentwickelt werden können.</p>
+
+      <div class="timeline" id="timeline"></div>
+      <div class="progress" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+    </aside>
+  </section>
+
+  <script>
+    if(new URLSearchParams(window.location.search).has('embed')){
+      document.body.classList.add('embedded');
+    }
+
+    const base = 'ki_iteration_assets/';
+    const asset = file => base + file;
+
+    const stages = [
+      {
+        title:'Von der Skizze zur Variantenfamilie',
+        copy:'KI beschleunigt frühe Entwurfsphasen: Aus einer groben Idee entstehen schnell mehrere räumliche Lesarten, die verglichen und weiterentwickelt werden können.',
+        label:'Input-Skizze',
+        files:[
+          'stage01_01.png',
+          'stage01_02.png',
+          'stage01_03.png',
+          'stage01_04.png'
+        ]
+      },
+      {
+        title:'Schnelle Varianten statt Einzelentwurf',
+        copy:'Mehrere Alternativen entstehen parallel: Wegenetz, Pflanzstruktur, offene Flächen und Gebäudeumfeld können in kurzer Zeit gegeneinander getestet werden.',
+        label:'Varianten-Sprint',
+        files:[
+          'stage02_01.png',
+          'stage02_02.png',
+          'stage02_03.png',
+          'stage02_04.png'
+        ]
+      },
+      {
+        title:'Kontext wird mitgedacht',
+        copy:'Die Idee wird in Lageplan und Umgebung geprüft. Das macht sichtbar, ob das Konzept an Wege, Bestandsgrün und Nachbarschaft anschließt.',
+        label:'Kontext-Check',
+        files:[
+          'stage03_01.png',
+          'stage03_02.png',
+          'stage03_03.png',
+          'stage03_04.png'
+        ]
+      },
+      {
+        title:'Struktur prüfen, nicht nur Bildwirkung',
+        copy:'Linien- und Strukturvarianten helfen, den Entwurf zu reduzieren: Was ist Erschließung, was ist Grünstruktur, was ist Nutzungsfläche?',
+        label:'Strukturprüfung',
+        files:[
+          'stage04_01.png',
+          'stage04_02.png',
+          'stage04_03.png',
+          'stage04_04.png'
+        ]
+      },
+      {
+        title:'Auswahl und Verfeinerung',
+        copy:'Aus brauchbaren Ansätzen entsteht ein konsistenterer Masterplan. KI wird hier nicht zum Ersatz, sondern zum Beschleuniger für Vergleich und Entscheidung.',
+        label:'Verfeinerung',
+        files:[
+          'stage05_01.png',
+          'stage05_02.png',
+          'stage05_03.png',
+          'stage05_04.png'
+        ]
+      },
+      {
+        title:'Kommunikation des Konzepts',
+        copy:'Am Ende können aus der gleichen Entwurfsidee Lageplan, Ausschnitt und Perspektiven entstehen. Das verbessert Abstimmung und frühe Verständlichkeit.',
+        label:'Kommunikation',
+        files:[
+          'stage06_01.png',
+          'stage06_02.png',
+          'stage06_03.png',
+          'stage06_04.png'
+        ]
+      }
+    ];
+
+    const allFrames = stages.flatMap((stage, stageIndex) => stage.files.map((file, fileIndex) => ({
+      file,
+      stageIndex,
+      fileIndex
+    })));
+
+    const mainFrame = document.getElementById('mainFrame');
+    const stageTitle = document.getElementById('stageTitle');
+    const stageCopy = document.getElementById('stageCopy');
+    const timeline = document.getElementById('timeline');
+    const progressFill = document.getElementById('progressFill');
+    const variantEls = [
+      document.getElementById('variantA'),
+      document.getElementById('variantB'),
+      document.getElementById('variantC'),
+      document.getElementById('variantD')
+    ];
+    let currentVisible = null;
+
+    const mainImages = allFrames.map(frame => {
+      const image = document.createElement('img');
+      image.src = asset(frame.file);
+      image.alt = stages[frame.stageIndex].label;
+      mainFrame.appendChild(image);
+      return image;
+    });
+
+    timeline.innerHTML = stages.map((stage, i) => `
+      <div class="step" data-step="${i}">
+        <div class="step-number">${i + 1}</div>
+        <div class="step-title">${stage.label}</div>
+      </div>
+    `).join('');
+
+    function setStage(index){
+      const frame = allFrames[index];
+      const stage = stages[frame.stageIndex];
+      stageTitle.textContent = stage.title;
+      stageCopy.textContent = stage.copy;
+
+      mainImages.forEach((image, i) => {
+        image.classList.remove('leaving');
+        if(i !== index) image.classList.remove('visible');
+      });
+
+      if(currentVisible !== null && currentVisible !== index){
+        mainImages[currentVisible].classList.add('leaving');
+        window.setTimeout(() => mainImages[currentVisible]?.classList.remove('leaving'), 900);
+      }
+
+      mainImages[index].classList.add('visible');
+      currentVisible = index;
+      document.querySelectorAll('.step').forEach((step, i) => step.classList.toggle('active', i === frame.stageIndex));
+
+      stage.files.forEach((file, i) => {
+        variantEls[i].src = asset(file);
+        variantEls[i].parentElement.classList.toggle('active', i === frame.fileIndex);
+      });
+
+      progressFill.style.width = `${((index + 1) / allFrames.length) * 100}%`;
+    }
+
+    const initialFrame = Number(window.location.hash.replace('#',''));
+    let index = Number.isInteger(initialFrame) && initialFrame >= 0 && initialFrame < allFrames.length ? initialFrame : 0;
+    let wheelLocked = false;
+    setStage(index);
+
+    function moveFrame(direction){
+      const next = Math.max(0, Math.min(allFrames.length - 1, index + direction));
+      if(next === index) return;
+      index = next;
+      setStage(index);
+    }
+
+    window.addEventListener('wheel', event => {
+      event.preventDefault();
+      if(wheelLocked) return;
+      const direction = event.deltaY > 0 ? 1 : -1;
+      moveFrame(direction);
+      wheelLocked = true;
+      window.setTimeout(() => {
+        wheelLocked = false;
+      }, 420);
+    }, {passive:false});
+
+    window.addEventListener('keydown', event => {
+      if(event.key === 'ArrowRight' || event.key === 'ArrowDown') moveFrame(1);
+      if(event.key === 'ArrowLeft' || event.key === 'ArrowUp') moveFrame(-1);
+    });
+  </script>
+</body>
+</html>
