@@ -1028,8 +1028,13 @@
       color:#8fe2b5;
       font-weight:800;
     }
+    .viewer-preview-hint .touch-copy{display:none;}
+    @media (pointer:coarse), (max-width:760px){
+      .viewer-preview-hint .desktop-copy{display:none;}
+      .viewer-preview-hint .touch-copy{display:inline;}
+    }
 
-    .impact-card{
+  .impact-card{
       border:1px solid var(--line);
       background:rgba(255,255,255,.88);
       border-radius:22px;
@@ -1618,7 +1623,7 @@
             <div class="example-frame active-example-frame" data-example-frame="web3d">
               <!-- Lokale Viewer-Kopie bewahrt relative Modellpfade; Fallback bleibt sichtbar, falls die bestehenden externen Module des Viewers blockiert sind. -->
               <iframe class="iteration-embed viewer-embed" src="web3dviewer_embed/desktop.html?embed=1" data-src="web3dviewer_embed/desktop.html?embed=1" title="Web3DViewer für schnelle digitale Entwurfsprüfung"></iframe>
-              <div class="viewer-preview-hint"><strong>Interaktiv:</strong> ins Bild klicken, mit WASD bewegen, E/L ausprobieren. Mit Esc kommt der Mauszeiger zurück. Für mehr Platz: Lokal öffnen.</div>
+              <div class="viewer-preview-hint"><strong>Interaktiv:</strong> <span class="desktop-copy">ins Bild klicken, mit WASD bewegen, E/L ausprobieren. Mit Esc kommt der Mauszeiger zurück. Für mehr Platz: Lokal öffnen.</span><span class="touch-copy">links ziehen zum Bewegen, rechts ziehen zum Umsehen. E klappt Schichten auf, L zeigt Layer. Für mehr Platz: Lokal öffnen.</span></div>
               <a class="viewer-link" href="web3dviewer_embed/desktop.html" target="_blank" rel="noopener">Lokal öffnen</a>
             </div>
           </div>

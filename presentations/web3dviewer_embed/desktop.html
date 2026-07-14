@@ -67,8 +67,81 @@
       margin-left: 5px;
     }
 
+    body.touch-mode #desktopControls { display: none !important; }
+    body.desktop-mode #mobileControls { display: none !important; }
+
     #mobileControls { pointer-events:none; }
     #mobileControls * { pointer-events:auto; user-select:none; -webkit-user-select:none; }
+    #touchHint {
+      position: fixed;
+      left: calc(12px + env(safe-area-inset-left));
+      top: calc(12px + env(safe-area-inset-top));
+      z-index: 54;
+      display: none;
+      max-width: min(440px, calc(100vw - 24px));
+      padding: 10px 12px;
+      border: 1px solid rgba(63,207,142,0.35);
+      border-radius: 12px;
+      background: rgba(20,20,20,0.78);
+      color: #e6f4ee;
+      font: 700 0.9rem/1.35 sans-serif;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+      pointer-events: none;
+    }
+    body.touch-mode #touchHint { display: block; }
+    #touchHint strong { color:#80efbb; }
+    #mobileButtonStack {
+      position: fixed;
+      right: calc(12px + env(safe-area-inset-right));
+      bottom: calc(12px + env(safe-area-inset-bottom));
+      z-index: 50;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+    .mobile-action-btn {
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      border: 1px solid rgba(63,207,142,0.26);
+      background:#222;
+      color:#3fcf8e;
+      font: 700 0.82rem/1 sans-serif;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.24);
+    }
+    .mobile-action-btn.vertical {
+      background:#3fcf8e;
+      color:#222;
+      font-size:1.3rem;
+    }
+    body.embedded #touchHint {
+      left: 8px;
+      top: 8px;
+      max-width: min(315px, calc(100vw - 16px));
+      padding: 5px 7px;
+      border-radius: 9px;
+      font-size: 0.58rem;
+      line-height: 1.25;
+    }
+    body.embedded #joystickZone {
+      left: 8px !important;
+      bottom: 8px !important;
+      width: 82px !important;
+      height: 82px !important;
+    }
+    body.embedded #mobileButtonStack {
+      right: 8px;
+      bottom: 8px;
+      gap: 6px;
+    }
+    body.embedded .mobile-action-btn {
+      width: 34px;
+      height: 34px;
+      font-size: 0.58rem;
+    }
+    body.embedded .mobile-action-btn.vertical {
+      font-size: 0.9rem;
+    }
 
     #desktopControls {
       position: fixed;
@@ -227,13 +300,14 @@
 
   <div id="mobileControls" style="display:none;">
     <div id="joystickZone" style="position:fixed; left:10px; bottom:10px; width:110px; height:110px; z-index:50;"></div>
-    <div style="position:fixed; right: calc(12px + env(safe-area-inset-right)); bottom: calc(12px + env(safe-area-inset-bottom)); z-index:50; display:flex; flex-direction:column; gap:12px;">
-      <button id="btnMenu" style="width:48px;height:48px;border-radius:50%;background:#222;color:#3fcf8e;font-size:1.08em;">≡</button>
-      <button id="btnExplode" style="width:48px;height:48px;border-radius:50%;background:#222;color:#3fcf8e;font-size:0.95em;">⤢</button>
-      <button id="btnLayers" style="width:48px;height:48px;border-radius:50%;background:#222;color:#3fcf8e;font-size:0.72em;">LAY</button>
-      <button id="btnUp" style="width:48px;height:48px;border-radius:50%;background:#3fcf8e;color:#222;font-size:1.3em;">↑</button>
-      <button id="btnDown" style="width:48px;height:48px;border-radius:50%;background:#3fcf8e;color:#222;font-size:1.3em;">↓</button>
+    <div id="mobileButtonStack">
+      <button id="btnMenu" class="mobile-action-btn">MEN</button>
+      <button id="btnExplode" class="mobile-action-btn">E</button>
+      <button id="btnLayers" class="mobile-action-btn">L</button>
+      <button id="btnUp" class="mobile-action-btn vertical">↑</button>
+      <button id="btnDown" class="mobile-action-btn vertical">↓</button>
     </div>
+    <div id="touchHint"><strong>Touch:</strong> links ziehen = bewegen, rechts ziehen = umsehen. E klappt Schichten auf, L zeigt Layer. In der großen Ansicht ist mehr Platz.</div>
   </div>
 
   <div id="desktopControls">
@@ -405,6 +479,9 @@
     const desktopReset = document.getElementById('desktopReset');
     const pointerState = document.getElementById('pointerState');
 
+    const coarsePointerQuery = window.matchMedia('(pointer: coarse)');
+    let adaptiveControlMode = null;
+    let mobileControlsReady = false;
     const keyboardInput = {
       forward: false,
       backward: false,
@@ -446,6 +523,49 @@
       loadingSpinner.style.display = 'block';
       startAppWithModel(MODEL_URL);
     });
+
+    function shouldUseTouchControls() {
+      return coarsePointerQuery.matches || navigator.maxTouchPoints > 0 || window.innerWidth <= 760;
+    }
+
+    function setControlMode(mode) {
+      if (adaptiveControlMode === mode) return;
+      adaptiveControlMode = mode;
+      if (mode === 'touch' && !mobileControlsReady) {
+        enableMobileControls();
+        mobileControlsReady = true;
+      }
+      document.body.classList.toggle('touch-mode', mode === 'touch');
+      document.body.classList.toggle('desktop-mode', mode === 'desktop');
+      mobileControls.style.display = mode === 'touch' ? 'block' : 'none';
+      desktopControls.style.display = mode === 'desktop' ? 'flex' : 'none';
+      if (mode === 'desktop') releaseTouchInputs();
+      else releasePointerControl();
+    }
+
+    function updateAdaptiveControlMode() {
+      setControlMode(shouldUseTouchControls() ? 'touch' : 'desktop');
+    }
+
+    function releaseTouchInputs() {
+      joystickInput.x = 0;
+      joystickInput.y = 0;
+      joystickInput.force = 0;
+      verticalInput = 0;
+      cameraTouchActive = false;
+      cameraTouchId = null;
+    }
+
+    function setupAdaptiveControls() {
+      enableDesktopControls();
+      updateAdaptiveControlMode();
+      coarsePointerQuery.addEventListener?.('change', updateAdaptiveControlMode);
+      window.addEventListener('resize', updateAdaptiveControlMode);
+      window.addEventListener('touchstart', () => setControlMode('touch'), { passive: true });
+      window.addEventListener('keydown', e => {
+        if (e.key === 'Tab' || e.code?.startsWith('Key') || e.code === 'Space') setControlMode('desktop');
+      });
+    }
 
     function getLayerLabel(objName, fallbackIndex) {
       if (objName && LAYER_LABELS[objName]) return LAYER_LABELS[objName];
@@ -978,9 +1098,7 @@ function setExplodeTargets(open) {
         applySunEnabled();
         // -------------------------------------
 
-        mobileControls.style.display = 'none';
-        desktopControls.style.display = 'flex';
-        enableDesktopControls();
+        setupAdaptiveControls();
 
         updateSpeedUI();
         updateScaleUI();
@@ -1020,7 +1138,7 @@ function setExplodeTargets(open) {
         zone: document.getElementById('joystickZone'),
         mode: 'dynamic',
         color: '#3fcf8e',
-        size: 80
+        size: document.body.classList.contains('embedded') ? 56 : 80
       });
 
       joystickManager.on('move', (evt, data) => {
@@ -1105,6 +1223,7 @@ function setExplodeTargets(open) {
             cameraTouchActive = true;
             lastTouchX = touch.clientX;
             lastTouchY = touch.clientY;
+            e.preventDefault();
           }
         }
       }, { passive: false });
@@ -1120,6 +1239,8 @@ function setExplodeTargets(open) {
             pitch -= dy * touchLookFactor;
 
             pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
+            targetYaw = yaw;
+            targetPitch = pitch;
             cameraHolder.rotation.y = yaw;
             cameraPitch.rotation.x = pitch;
 
@@ -1312,6 +1433,7 @@ function setExplodeTargets(open) {
       btnLayersAllOff.onclick = () => setAllLayersVisible(false);
 
       document.addEventListener('click', e => {
+        if (adaptiveControlMode === 'touch') return;
         if (!isPointerToggleClickTarget(e.target)) return;
         if (menu.style.display === 'block') menu.style.display = 'none';
         togglePointerControl();
@@ -1445,8 +1567,10 @@ function setExplodeTargets(open) {
         const right = new THREE.Vector3(Math.cos(yaw), 0, -Math.sin(yaw));
 
         const v = new THREE.Vector3();
-        const moveForward = (keyboardInput.forward ? 1 : 0) - (keyboardInput.backward ? 1 : 0);
-        const moveRight = (keyboardInput.right ? 1 : 0) - (keyboardInput.left ? 1 : 0);
+        const touchForward = joystickInput.y * joystickInput.force;
+        const touchRight = joystickInput.x * joystickInput.force;
+        const moveForward = (keyboardInput.forward ? 1 : 0) - (keyboardInput.backward ? 1 : 0) + touchForward;
+        const moveRight = (keyboardInput.right ? 1 : 0) - (keyboardInput.left ? 1 : 0) + touchRight;
         v.addScaledVector(dir, moveForward);
         v.addScaledVector(right, moveRight);
         if (v.length() > 1) v.normalize();
@@ -1454,11 +1578,12 @@ function setExplodeTargets(open) {
 
         cameraHolder.position.add(v);
 
-        verticalInput = (keyboardInput.up ? 1 : 0) - (keyboardInput.down ? 1 : 0);
+        const keyboardVerticalInput = (keyboardInput.up ? 1 : 0) - (keyboardInput.down ? 1 : 0);
+        const combinedVerticalInput = THREE.MathUtils.clamp(keyboardVerticalInput + verticalInput, -1, 1);
 
         // Vertical movement via Space / Shift.
         if (flying) {
-          cameraHolder.position.y += verticalInput * currentSpeed * delta;
+          cameraHolder.position.y += combinedVerticalInput * currentSpeed * delta;
         } else {
           updateGroundedVertical(delta);
         }
