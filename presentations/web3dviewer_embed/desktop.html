@@ -33,6 +33,40 @@
     }
     #menu button:last-child { background:#222; color:#3fcf8e; margin-left:1em;}
 
+    body.embedded #menu {
+      width: min(420px, 48vw);
+      min-width: 0;
+      max-width: 48vw;
+      padding: 8px 11px;
+      border-radius: 10px;
+      box-shadow: 0 10px 34px rgba(0,0,0,0.32);
+    }
+    body.embedded #menu label {
+      margin-bottom: 3px;
+      font-size: 0.66em;
+    }
+    body.embedded #menu input[type="range"] {
+      width: min(340px, 38vw);
+      height: 12px;
+    }
+    body.embedded #menu .slider-tip {
+      margin-bottom: 2px;
+      font-size: 0.58em;
+    }
+    body.embedded #menu input[type="checkbox"] {
+      transform: scale(0.72);
+      margin-right: 0.2em;
+    }
+    body.embedded #menu button {
+      padding: 0.32em 0.8em;
+      border-radius: 8px;
+      font-size: 0.62em;
+      margin-top: 4px;
+    }
+    body.embedded #menu button:last-child {
+      margin-left: 5px;
+    }
+
     #mobileControls { pointer-events:none; }
     #mobileControls * { pointer-events:auto; user-select:none; -webkit-user-select:none; }
 
@@ -61,6 +95,23 @@
       color: #3fcf8e;
       font-size: 0.75em;
       cursor: pointer;
+    }
+
+    body.embedded #desktopControls {
+      left: 10px;
+      bottom: 10px;
+      gap: 5px;
+      padding: 6px 7px;
+      border-radius: 10px;
+    }
+    body.embedded #desktopControls button {
+      width: 32px;
+      height: 32px;
+      font-size: 0.62em;
+    }
+    body.embedded #pointerState {
+      min-width: 120px;
+      font-size: 0.74em;
     }
     #desktopControls button:focus-visible,
     #menu button:focus-visible,
@@ -135,6 +186,12 @@
 
 <body>
   <div id="loadingSpinner">Lade Modell ...</div>
+
+  <script>
+    if (new URLSearchParams(window.location.search).has('embed')) {
+      document.body.classList.add('embedded');
+    }
+  </script>
 
   <div id="menu">
     <label for="speedSlider">Bewegungsgeschwindigkeit: <span id="speedValue">30</span></label>

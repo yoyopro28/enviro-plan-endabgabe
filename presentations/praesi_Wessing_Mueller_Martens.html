@@ -1007,6 +1007,28 @@
       backdrop-filter:blur(8px);
     }
 
+    .viewer-preview-hint{
+      position:absolute;
+      left:12px;
+      top:12px;
+      z-index:3;
+      max-width:min(410px,calc(100% - 24px));
+      padding:7px 10px;
+      border:1px solid rgba(255,255,255,.62);
+      border-radius:11px;
+      background:rgba(20,30,25,.78);
+      color:#eef7f1;
+      font-size:clamp(10px,.85vw,12px);
+      line-height:1.28;
+      box-shadow:0 12px 30px rgba(0,0,0,.22);
+      pointer-events:none;
+    }
+
+    .viewer-preview-hint strong{
+      color:#8fe2b5;
+      font-weight:800;
+    }
+
     .impact-card{
       border:1px solid var(--line);
       background:rgba(255,255,255,.88);
@@ -1586,16 +1608,17 @@
             <div class="example-head">
               <h3>Anwendungsbeispiele: Konzeptfindung / Entwurfsiteration</h3>
               <div class="example-tabs" aria-label="Anwendungsbeispiele auswählen">
-                <button class="example-tab active-example" data-example="iteration" type="button">KI-Iteration</button>
-                <button class="example-tab" data-example="web3d" type="button">Web3DViewer</button>
+                <button class="example-tab" data-example="iteration" type="button">KI-Iteration</button>
+                <button class="example-tab active-example" data-example="web3d" type="button">Web3DViewer</button>
               </div>
             </div>
-            <div class="example-frame active-example-frame" data-example-frame="iteration">
+            <div class="example-frame" data-example-frame="iteration">
               <iframe class="iteration-embed" src="ki_iteration_animation.html?embed=1" title="KI-gestützte schnelle Varianteniteration in der Entwurfsplanung"></iframe>
             </div>
-            <div class="example-frame" data-example-frame="web3d">
+            <div class="example-frame active-example-frame" data-example-frame="web3d">
               <!-- Lokale Viewer-Kopie bewahrt relative Modellpfade; Fallback bleibt sichtbar, falls die bestehenden externen Module des Viewers blockiert sind. -->
-              <iframe class="iteration-embed viewer-embed" data-src="web3dviewer_embed/desktop.html" title="Web3DViewer für schnelle digitale Entwurfsprüfung"></iframe>
+              <iframe class="iteration-embed viewer-embed" src="web3dviewer_embed/desktop.html?embed=1" data-src="web3dviewer_embed/desktop.html?embed=1" title="Web3DViewer für schnelle digitale Entwurfsprüfung"></iframe>
+              <div class="viewer-preview-hint"><strong>Interaktiv:</strong> ins Bild klicken, mit WASD bewegen, E/L ausprobieren. Mit Esc kommt der Mauszeiger zurück. Für mehr Platz: Lokal öffnen.</div>
               <a class="viewer-link" href="web3dviewer_embed/desktop.html" target="_blank" rel="noopener">Lokal öffnen</a>
             </div>
           </div>
