@@ -67,6 +67,38 @@
       margin-left: 5px;
     }
 
+    body.touch-mode:not(.embedded) #menu {
+      width: min(560px, 76vw);
+      min-width: 0;
+      max-width: 76vw;
+      max-height: calc(100vh - 28px);
+      overflow: auto;
+      padding: 10px 14px;
+      border-radius: 12px;
+    }
+    body.touch-mode:not(.embedded) #menu label {
+      margin-bottom: 4px;
+      font-size: 0.78em;
+    }
+    body.touch-mode:not(.embedded) #menu input[type="range"] {
+      width: min(500px, 68vw);
+      height: 14px;
+    }
+    body.touch-mode:not(.embedded) #menu .slider-tip {
+      margin-bottom: 3px;
+      font-size: 0.68em;
+    }
+    body.touch-mode:not(.embedded) #menu input[type="checkbox"] {
+      transform: scale(0.85);
+      margin-right: 0.25em;
+    }
+    body.touch-mode:not(.embedded) #menu button {
+      padding: 0.45em 1em;
+      border-radius: 8px;
+      font-size: 0.72em;
+      margin-top: 6px;
+    }
+
     body.touch-mode #desktopControls { display: none !important; }
     body.desktop-mode #mobileControls { display: none !important; }
 
@@ -95,52 +127,61 @@
       right: calc(12px + env(safe-area-inset-right));
       bottom: calc(12px + env(safe-area-inset-bottom));
       z-index: 50;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
+      display:grid;
+      grid-template-columns: repeat(2, 38px);
+      gap:7px;
     }
     .mobile-action-btn {
-      width:48px;
-      height:48px;
+      width:38px;
+      height:38px;
       border-radius:50%;
       border: 1px solid rgba(63,207,142,0.26);
       background:#222;
       color:#3fcf8e;
-      font: 700 0.82rem/1 sans-serif;
+      font: 700 0.68rem/1 sans-serif;
       box-shadow: 0 8px 22px rgba(0,0,0,0.24);
     }
     .mobile-action-btn.vertical {
       background:#3fcf8e;
       color:#222;
-      font-size:1.3rem;
+      font-size:1rem;
+    }
+    .mobile-action-btn.speed {
+      background: rgba(20,20,20,0.9);
+      border-color: rgba(63,207,142,0.42);
+      font-size: 0.9rem;
     }
     body.embedded #touchHint {
       left: 8px;
       top: 8px;
-      max-width: min(315px, calc(100vw - 16px));
-      padding: 5px 7px;
-      border-radius: 9px;
-      font-size: 0.58rem;
-      line-height: 1.25;
+      max-width: min(250px, calc(100vw - 16px));
+      padding: 4px 6px;
+      border-radius: 8px;
+      font-size: 0.48rem;
+      line-height: 1.2;
     }
     body.embedded #joystickZone {
       left: 8px !important;
       bottom: 8px !important;
-      width: 82px !important;
-      height: 82px !important;
+      width: 64px !important;
+      height: 64px !important;
     }
     body.embedded #mobileButtonStack {
       right: 8px;
       bottom: 8px;
-      gap: 6px;
+      grid-template-columns: repeat(2, 26px);
+      gap: 4px;
     }
     body.embedded .mobile-action-btn {
-      width: 34px;
-      height: 34px;
-      font-size: 0.58rem;
+      width: 26px;
+      height: 26px;
+      font-size: 0.48rem;
     }
     body.embedded .mobile-action-btn.vertical {
-      font-size: 0.9rem;
+      font-size: 0.72rem;
+    }
+    body.embedded .mobile-action-btn.speed {
+      font-size: 0.64rem;
     }
 
     #desktopControls {
@@ -302,7 +343,9 @@
     <div id="joystickZone" style="position:fixed; left:10px; bottom:10px; width:110px; height:110px; z-index:50;"></div>
     <div id="mobileButtonStack">
       <button id="btnMenu" class="mobile-action-btn">MEN</button>
+      <button id="btnSpeedUp" class="mobile-action-btn speed">+</button>
       <button id="btnExplode" class="mobile-action-btn">E</button>
+      <button id="btnSpeedDown" class="mobile-action-btn speed">-</button>
       <button id="btnLayers" class="mobile-action-btn">L</button>
       <button id="btnUp" class="mobile-action-btn vertical">↑</button>
       <button id="btnDown" class="mobile-action-btn vertical">↓</button>
@@ -458,6 +501,8 @@
     const btnMenu = document.getElementById('btnMenu');
     const btnExplode = document.getElementById('btnExplode');
     const btnLayers = document.getElementById('btnLayers');
+    const btnSpeedUp = document.getElementById('btnSpeedUp');
+    const btnSpeedDown = document.getElementById('btnSpeedDown');
 
     // Mobile layer panel elements
     const layerPanel = document.getElementById('layerPanel');
@@ -591,6 +636,25 @@
     speedSlider.oninput = () => {
       setMovementSpeed(parseFloat(speedSlider.value));
     };
+
+    function bindTapButton(button, handler) {
+      let lastTouch = 0;
+      button.addEventListener('touchend', e => {
+        e.preventDefault();
+        lastTouch = performance.now();
+        handler();
+      }, { passive: false });
+      button.addEventListener('click', e => {
+        if (performance.now() - lastTouch < 450) return;
+        e.preventDefault();
+        handler();
+      });
+    }
+
+    function stepMobileSpeed(direction) {
+      const step = document.body.classList.contains('embedded') ? 1 : 2;
+      setMovementSpeed(speed.base + direction * step);
+    }
     scaleSlider.oninput = () => scaleModel(parseFloat(scaleSlider.value));
     fovSlider.oninput = () => setCameraFov(parseFloat(fovSlider.value));
 
@@ -1177,6 +1241,9 @@ function setExplodeTargets(open) {
         e.preventDefault();
         menu.style.display='block';
       }, { passive:false });
+
+      bindTapButton(btnSpeedUp, () => stepMobileSpeed(1));
+      bindTapButton(btnSpeedDown, () => stepMobileSpeed(-1));
 
       // Layers panel toggle
       if (btnLayers) {
